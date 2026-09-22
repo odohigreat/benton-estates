@@ -75,7 +75,7 @@ export default function PropertyCard({ property }: { property: PropertyItem }) {
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
           {/* Location */}
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-2">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-2">
             <MapPin className="w-3.5 h-3.5 text-[#E40C05]" />
             <span>{property.location}, {property.state}</span>
           </div>
@@ -87,15 +87,15 @@ export default function PropertyCard({ property }: { property: PropertyItem }) {
             </Link>
           </h3>
 
-          <p className="text-xs text-slate-600 line-clamp-2 mb-4 leading-relaxed">
+          <p className="text-sm text-slate-700 font-medium line-clamp-2 mb-4 leading-relaxed">
             {property.tagline}
           </p>
 
           {/* Title Type Indicator */}
           <div className="p-2.5 rounded-lg bg-blue-50/60 border border-blue-100 flex items-start gap-2 mb-4">
             <FileText className="w-4 h-4 text-[#0304CE] shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-700">
-              <span className="font-semibold text-slate-900 block">Title Document:</span>
+            <div className="text-xs text-slate-800 font-medium">
+              <span className="font-bold text-slate-900 block">Title Document:</span>
               <span>{property.title_type}</span>
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function PropertyCard({ property }: { property: PropertyItem }) {
           {highlights.length > 0 && (
             <div className="space-y-1.5 mb-5">
               {highlights.slice(0, 2).map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-slate-600">
+                <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#0304CE] shrink-0" />
                   <span className="truncate">{item}</span>
                 </div>

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Plus_Jakarta_Sans, Outfit } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -47,13 +48,27 @@ export const viewport: Viewport = {
   themeColor: '#0304CE'
 };
 
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-heading',
+  display: 'swap',
+  weight: ['500', '600', '700', '800', '900'],
+});
+
 export default function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full scroll-smooth">
+    <html lang="en" className={`${plusJakarta.variable} ${outfit.variable} h-full scroll-smooth`}>
       <body className="min-h-full flex flex-col antialiased bg-white text-slate-800">
         <Navbar />
         <main className="flex-1 pt-24 sm:pt-28">

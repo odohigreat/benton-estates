@@ -31,8 +31,8 @@ export default function AboutPage() {
             <h1 className="text-4xl sm:text-6xl font-black font-serif tracking-tight">
               About Benton Estates
             </h1>
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              Benton Estates, operating through <strong>Benton Homes &amp; Development Limited</strong>, is a forward-thinking real estate development and advisory firm dedicated to bringing trust, transparency, and timely delivery to the African property sector.
+            <p className="text-slate-200 text-base sm:text-lg leading-relaxed font-medium">
+              Benton Estates, operating through <strong className="text-white font-bold">Benton Homes &amp; Development Limited</strong>, is a forward-thinking real estate development and advisory firm dedicated to bringing trust, transparency, and timely delivery to the African property sector.
             </p>
           </div>
         </div>
@@ -53,7 +53,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-black text-slate-900 mb-4 font-serif">
               Company Vision
             </h2>
-            <blockquote className="text-base text-slate-700 font-medium italic leading-relaxed border-l-4 border-[#0304CE] pl-4 bg-blue-50/40 py-2 rounded-r-lg">
+            <blockquote className="text-base text-slate-800 font-semibold italic leading-relaxed border-l-4 border-[#0304CE] pl-4 bg-blue-50/40 py-2.5 rounded-r-lg">
               &quot;To be Africa&apos;s leading real estate company renowned for transparency, trust, and timely delivery of quality homes.&quot;
             </blockquote>
           </div>
@@ -69,7 +69,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-black text-slate-900 mb-4 font-serif">
               Company Mission
             </h2>
-            <blockquote className="text-base text-slate-700 font-medium italic leading-relaxed border-l-4 border-[#E40C05] pl-4 bg-red-50/40 py-2 rounded-r-lg">
+            <blockquote className="text-base text-slate-800 font-semibold italic leading-relaxed border-l-4 border-[#E40C05] pl-4 bg-red-50/40 py-2.5 rounded-r-lg">
               &quot;To provide affordable, litigation-free properties and deliver homes by upholding integrity, transparency, and professionalism at every stage of the client journey.&quot;
             </blockquote>
           </div>
@@ -87,7 +87,7 @@ export default function AboutPage() {
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-serif">
               The H.O.M.E Core Values
             </h2>
-            <p className="text-slate-600 text-sm">
+            <p className="text-slate-700 text-sm sm:text-base font-medium">
               Every decision at Benton Estates is anchored in four foundational principles:
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function AboutPage() {
               <p className="text-xs uppercase text-[#0304CE] font-bold tracking-wider mb-3">
                 Radical Truth &amp; Clarity
               </p>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                 We believe trust is earned through complete truthfulness. We furnish prospective buyers with complete title details, accurate land surveys, and realistic timelines without exaggeration.
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function AboutPage() {
               <p className="text-xs uppercase text-[#143F9D] font-bold tracking-wider mb-3">
                 Accountability in Delivery
               </p>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                 We take total personal accountability for the estates we develop. We proactively resolve development hurdles and stand steadfastly behind every commitment made to our subscribers.
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function AboutPage() {
               <p className="text-xs uppercase text-[#E40C05] font-bold tracking-wider mb-3">
                 Client Empathy First
               </p>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                 Real estate is deeply personal. We treat every client—whether acquiring a single starter plot or multiple commercial acres—with the highest standard of attentive care.
               </p>
             </div>
@@ -141,7 +141,7 @@ export default function AboutPage() {
               <p className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-3">
                 Disciplined Performance
               </p>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed font-medium">
                 Ideas only matter when executed. We pride ourselves on timely survey processing, swift contract documentation, site demarcation, and structured physical land allocations.
               </p>
             </div>
@@ -160,23 +160,23 @@ export default function AboutPage() {
             <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 font-serif">
               Benton Homes &amp; Development Limited
             </h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Our registered operational headquarters is located at <strong>Summer Plazza, 102 Effurun Sapele Road, Airport Junction, Opposite Our Lady&apos;s High School, Effurun, Delta State</strong>. 
+            <p className="text-slate-700 text-sm leading-relaxed font-medium">
+              Our registered operational headquarters is located at <strong className="text-slate-900">Summer Plazza, 102 Effurun Sapele Road, Airport Junction, Opposite Our Lady&apos;s High School, Effurun, Delta State</strong>. 
             </p>
-            <p className="text-slate-600 text-sm leading-relaxed">
+            <p className="text-slate-700 text-sm leading-relaxed font-medium">
               We specialize in land sales and property development across prominent regional economic hubs including Warri, Effurun, Udu, Asaba, and expanding corridors.
             </p>
 
             <div className="pt-3 flex flex-wrap gap-4 text-xs font-semibold text-slate-700">
-              <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
+              <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 Duly Registered Corporate Entity
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
+              <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 Designated Corporate Bank Accounts
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
+              <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-slate-200 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 Physical Inspection Services
               </span>
@@ -193,7 +193,7 @@ export default function AboutPage() {
             <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-serif">
               Ready to Discuss Your Property Goals?
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 leading-relaxed font-medium">
               Schedule a one-on-one session with our senior advisory team at our Effurun offices or via telephone / video consultation.
             </p>
             <div className="pt-2">

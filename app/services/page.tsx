@@ -141,7 +141,7 @@ export default function ServicesPage() {
             <h1 className="text-4xl sm:text-5xl font-black font-serif tracking-tight">
               Our Professional Services
             </h1>
-            <p className="text-slate-300 text-base leading-relaxed">
+            <p className="text-slate-200 text-base leading-relaxed font-medium">
               From land development and verified property sales to consulting, professional training, and digital property technology, Benton Estates is your trusted partner.
             </p>
           </div>
@@ -177,13 +177,13 @@ export default function ServicesPage() {
                     {service.title}
                   </h3>
 
-                  <p className="text-slate-600 text-sm leading-relaxed">
+                  <p className="text-slate-700 text-sm leading-relaxed font-medium">
                     {service.description}
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     {service.points.map((pt, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                      <div key={i} className="flex items-start gap-2 text-xs text-slate-800 font-medium">
                         <CheckCircle2 className={`w-4 h-4 ${service.color} shrink-0 mt-0.5`} />
                         <span>{pt}</span>
                       </div>

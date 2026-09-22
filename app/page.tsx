@@ -1,16 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { 
-  ArrowRight, 
-  ShieldCheck, 
-  MapPin, 
-  CheckCircle2, 
-  Building2, 
-  Compass, 
-  GraduationCap, 
-  Laptop, 
-  Phone, 
+import {
+  ArrowRight,
+  ShieldCheck,
+  MapPin,
+  CheckCircle2,
+  Building2,
+  Compass,
+  GraduationCap,
+  Laptop,
+  Phone,
   MessageCircle,
   FileCheck2,
   CalendarCheck,
@@ -27,7 +27,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-16">
-      
+
       {/* SECTION 1: HERO */}
       <section className="relative -mt-24 sm:-mt-28 min-h-[92vh] flex items-center justify-center overflow-hidden">
         {/* Background Image with Cinematic Overlay */}
@@ -45,18 +45,18 @@ export default function HomePage() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center sm:text-left flex flex-col justify-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:pt-44 text-center sm:text-left flex flex-col justify-center">
           <div className="max-w-3xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold uppercase tracking-wider">
+            {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-[#E40C05] animate-ping" />
               <span>Premier Real Estate in Delta State</span>
-            </div>
+            </div> */}
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.08] font-serif">
+            <h1 className="text-4xl sm:text-6xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] font-serif">
               Your Trusted Partner in <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white">Quality Real Estate.</span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-slate-200 leading-relaxed font-normal max-w-2xl">
+            <p className="text-lg sm:text-xl text-slate-100 leading-relaxed font-medium max-w-2xl">
               Discover thoughtfully developed, litigation-free properties and strategic real estate opportunities with Benton Estates. Upholding integrity, transparency, and timely delivery at every step.
             </p>
 
@@ -84,7 +84,7 @@ export default function HomePage() {
                 <ShieldCheck className="w-5 h-5 text-[#E40C05] shrink-0 mt-0.5" />
                 <div>
                   <span className="text-white text-xs font-bold block">100% Litigation-Free</span>
-                  <span className="text-slate-300 text-[11px]">Free from adverse claims</span>
+                  <span className="text-slate-100 text-xs font-semibold">Free from adverse claims</span>
                 </div>
               </div>
 
@@ -92,7 +92,7 @@ export default function HomePage() {
                 <FileCheck2 className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-white text-xs font-bold block">Registered Titles</span>
-                  <span className="text-slate-300 text-[11px]">Deed &amp; Survey documentation</span>
+                  <span className="text-slate-100 text-xs font-semibold">Deed &amp; Survey documentation</span>
                 </div>
               </div>
 
@@ -100,7 +100,7 @@ export default function HomePage() {
                 <CalendarCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="text-white text-xs font-bold block">Structured Installments</span>
-                  <span className="text-slate-300 text-[11px]">0–12 month flexible plans</span>
+                  <span className="text-slate-100 text-xs font-semibold">0–12 month flexible plans</span>
                 </div>
               </div>
             </div>
@@ -111,8 +111,8 @@ export default function HomePage() {
       {/* SECTION 2: ABOUT BENTON ESTATES */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Column: Image with Floating Card */}
+
+          {/* Left Column: Image */}
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3] border border-slate-200">
               <Image
@@ -123,22 +123,6 @@ export default function HomePage() {
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            </div>
-
-            {/* Overlay Trust Badge */}
-            <div className="absolute -bottom-6 -right-4 sm:bottom-6 sm:-right-6 bg-white p-5 rounded-2xl shadow-xl border border-slate-100 max-w-xs">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center font-bold">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-xs uppercase font-bold text-slate-400 block">Integrity First</span>
-                  <span className="text-sm font-black text-slate-900">Benton Promise</span>
-                </div>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Timely physical allocation and authentic documentation for every subscriber.
-              </p>
             </div>
           </div>
 
@@ -152,8 +136,8 @@ export default function HomePage() {
               Building Sustainable Wealth Through Verified Real Estate.
             </h2>
 
-            <p className="text-slate-600 text-base leading-relaxed">
-              Operating as <strong className="text-slate-900">Benton Homes &amp; Development Limited</strong>, we are committed to making property ownership accessible, transparent, and rewarding for individuals, families, and corporate investors across Nigeria.
+            <p className="text-slate-700 text-base leading-relaxed font-medium">
+              Operating as <strong className="text-slate-900 font-bold">Benton Homes &amp; Development Limited</strong>, we are committed to making property ownership accessible, transparent, and rewarding for individuals, families, and corporate investors across Nigeria.
             </p>
 
             <div className="space-y-4 pt-2">
@@ -161,7 +145,7 @@ export default function HomePage() {
                 <h4 className="text-xs uppercase font-bold text-[#0304CE] tracking-wider mb-1">
                   Our Stated Vision
                 </h4>
-                <p className="text-sm text-slate-800 italic">
+                <p className="text-sm text-slate-800 font-semibold italic">
                   &quot;To be Africa&apos;s leading real estate company renowned for transparency, trust, and timely delivery of quality homes.&quot;
                 </p>
               </div>
@@ -170,7 +154,7 @@ export default function HomePage() {
                 <h4 className="text-xs uppercase font-bold text-[#E40C05] tracking-wider mb-1">
                   Our Stated Mission
                 </h4>
-                <p className="text-sm text-slate-800 italic">
+                <p className="text-sm text-slate-800 font-semibold italic">
                   &quot;To provide affordable, litigation-free properties and deliver homes by upholding integrity, transparency, and professionalism at every stage of the client journey.&quot;
                 </p>
               </div>
@@ -199,7 +183,7 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif">
               Featured Estates &amp; Schemes
             </h2>
-            <p className="text-slate-600 text-sm mt-1 max-w-xl">
+            <p className="text-slate-700 text-sm sm:text-base mt-1.5 max-w-xl font-medium">
               Carefully planned residential and commercial land developments situated in high-growth corridors.
             </p>
           </div>
@@ -231,20 +215,20 @@ export default function HomePage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif">
               Our Core Services
             </h2>
-            <p className="text-slate-600 text-sm">
+            <p className="text-slate-700 text-sm sm:text-base font-medium">
               Providing holistic real estate expertise from property acquisition to structural development and professional mentoring.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            
+
             <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center mb-5">
                   <Building2 className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Property Development</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
                   End-to-end residential and commercial construction, estate layout planning, drainage works, and quality residential home builds.
                 </p>
               </div>
@@ -261,7 +245,7 @@ export default function HomePage() {
                   <Compass className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Real Estate Consulting</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
                   Strategic property advisory, title verification guidance, site valuation, and investment risk assessment for individuals and corporate buyers.
                 </p>
               </div>
@@ -278,7 +262,7 @@ export default function HomePage() {
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Land Sales &amp; Allocation</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
                   Litigation-free surveyed plots in master-planned estates like Elevation Estate, with motorable roads and prompt physical plot allocation.
                 </p>
               </div>
@@ -295,7 +279,7 @@ export default function HomePage() {
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Training &amp; Mentoring</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
                   Equipping real estate entrepreneurs and realtors with high-performance sales skills, digital marketing, ethical standards, and deal closing.
                 </p>
               </div>
@@ -312,7 +296,7 @@ export default function HomePage() {
                   <Laptop className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Real Estate Technology</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-700 leading-relaxed font-medium">
                   Leveraging modern digital workflows, transparent digital subscription portals, and verifiable mapping tools for a frictionless customer journey.
                 </p>
               </div>
@@ -329,7 +313,7 @@ export default function HomePage() {
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Become a Benton Realtor</h3>
-                <p className="text-xs text-blue-100 leading-relaxed">
+                <p className="text-xs text-blue-100 leading-relaxed font-medium">
                   Partner with Benton Homes &amp; Development Limited. Enjoy high commissions, regular product training, and marketing support.
                 </p>
               </div>
@@ -356,19 +340,19 @@ export default function HomePage() {
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif">
             Why Choose Benton Estates?
           </h2>
-          <p className="text-slate-600 text-sm">
+          <p className="text-slate-700 text-sm sm:text-base font-medium">
             Our company culture and service delivery are anchored in our core <strong className="text-slate-900">HOME</strong> values.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          
+
           <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
             <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-black mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
               H
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Honesty</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 leading-relaxed font-medium">
               We practice radical transparency in land documentation, title status, boundary measurements, and development timelines. What we promise is what we deliver.
             </p>
           </div>
@@ -378,7 +362,7 @@ export default function HomePage() {
               O
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Ownership</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 leading-relaxed font-medium">
               We take full responsibility for each estate scheme we introduce. We treat our clients&apos; investments with the same care and dedication as our own.
             </p>
           </div>
@@ -388,7 +372,7 @@ export default function HomePage() {
               M
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Mindset of Service</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 leading-relaxed font-medium">
               Our team puts client peace of mind first. From initial inquiry through on-site physical inspection to final documentation handover, we serve with empathy.
             </p>
           </div>
@@ -398,7 +382,7 @@ export default function HomePage() {
               E
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Execution</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-xs text-slate-700 leading-relaxed font-medium">
               We focus on measurable, tangible delivery: swift contract generation, clear demarcations, verified survey plans, and scheduled physical land allocations.
             </p>
           </div>
@@ -410,7 +394,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#0A142F] text-white rounded-3xl overflow-hidden border-2 border-[#0304CE] shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12">
-            
+
             {/* Left Column: Image */}
             <div className="lg:col-span-6 relative min-h-[340px] lg:min-h-full">
               <Image
@@ -438,26 +422,26 @@ export default function HomePage() {
                 <h3 className="text-2xl sm:text-4xl font-extrabold font-serif">
                   Elevation Estate, Ekrerahwe
                 </h3>
-                <p className="text-blue-200 text-xs sm:text-sm italic mt-1">
+                <p className="text-blue-200 text-xs sm:text-sm italic mt-1 font-medium">
                   &quot;Own a piece of mind in a fast rising investment&quot;
                 </p>
 
-                <div className="mt-6 space-y-3 text-xs text-slate-300">
+                <div className="mt-6 space-y-3 text-xs text-slate-200 font-medium">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>Title:</strong> Registered Survey &amp; Deed of Assignment</span>
+                    <span><strong className="text-white">Title:</strong> Registered Survey &amp; Deed of Assignment</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>Plot Size:</strong> 464 SQM Standard Plot</span>
+                    <span><strong className="text-white">Plot Size:</strong> 464 SQM Standard Plot</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>Motorable Access:</strong> Directly accessible by road</span>
+                    <span><strong className="text-white">Motorable Access:</strong> Directly accessible by road</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span><strong>Encumbrances:</strong> Free from all government interests &amp; adverse claims</span>
+                    <span><strong className="text-white">Encumbrances:</strong> Free from all government interests &amp; adverse claims</span>
                   </div>
                 </div>
 
@@ -501,7 +485,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 sm:p-14 shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            
+
             {/* Left Info Column */}
             <div className="lg:col-span-5 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 text-[#0304CE] text-xs font-bold uppercase tracking-wider">
@@ -512,7 +496,7 @@ export default function HomePage() {
                 Let&apos;s Help You Find Your Next Property.
               </h2>
 
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-slate-700 text-sm leading-relaxed font-medium">
                 Whether you are looking to purchase surveyed land in Elevation Estate, schedule a site inspection, or discuss development advisory, our team is at your service.
               </p>
 
@@ -552,7 +536,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <span className="text-xs text-slate-400 font-semibold uppercase block">Corporate Office</span>
-                    <span className="text-xs text-slate-700 leading-relaxed block">
+                    <span className="text-xs text-slate-800 leading-relaxed block font-medium">
                       Summer Plazza, 102 Effurun Sapele Road, Airport Junction, Opposite Our Lady&apos;s High School, Effurun, Delta State.
                     </span>
                   </div>
@@ -564,7 +548,7 @@ export default function HomePage() {
             <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-900">Request a Free Consultation</h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-600 mt-1 font-medium">
                   Fill out the form below and a representative will respond within 24 hours.
                 </p>
               </div>

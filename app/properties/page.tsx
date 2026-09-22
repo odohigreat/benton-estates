@@ -116,7 +116,7 @@ export default function PropertiesPage() {
             <h1 className="text-4xl sm:text-5xl font-black font-serif tracking-tight">
               Properties &amp; Developments
             </h1>
-            <p className="text-slate-300 text-base leading-relaxed">
+            <p className="text-slate-200 text-base leading-relaxed font-medium">
               Explore our current land developments and planned residential schemes across Delta State. Every property undergoes meticulous title verification and physical survey.
             </p>
           </div>
