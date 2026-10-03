@@ -53,7 +53,7 @@ export default function AdminDashboardPage() {
     try { saved = localStorage.getItem('benton_admin_token'); } catch { return; }
     if (saved) {
       fetch('/api/admin/data', { headers: { Authorization: `Bearer ${saved}` }, signal: controller.signal })
-        .then(async response => { if (!response.ok) throw new Error('Your session could not be restored. Please sign in again.'); return response.json(); })
+        .then(async response => { if (!response.ok) { try { localStorage.removeItem('benton_admin_token'); } catch {} throw new Error('Your session could not be restored. Please sign in again.'); } return response.json(); })
         .then(result => { if (result.success) { setData(result.data); setAuthToken(saved); } })
         .catch(error => { if (error.name !== 'AbortError') setAuthError(error.message); });
     }

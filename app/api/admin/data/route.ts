@@ -1,16 +1,9 @@
 import { NextResponse } from 'next/server';
+import { verifyAdminRequest } from '@/lib/adminAuth';
 import { dbRepo } from '@/lib/db';
 
-function verifyAuth(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer bnt_adm_auth_')) {
-    return false;
-  }
-  return true;
-}
-
 export async function GET(req: Request) {
-  if (!verifyAuth(req)) {
+  if (!verifyAdminRequest(req)) {
     return NextResponse.json({ error: 'Unauthorized administrative access' }, { status: 401 });
   }
 
@@ -31,7 +24,7 @@ export async function GET(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  if (!verifyAuth(req)) {
+  if (!verifyAdminRequest(req)) {
     return NextResponse.json({ error: 'Unauthorized administrative access' }, { status: 401 });
   }
 

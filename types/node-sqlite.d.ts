@@ -1,4 +1,6 @@
 declare module 'node:sqlite' {
+  type SQLValue = null | number | bigint | string | Uint8Array;
+
   export class DatabaseSync {
     constructor(location: string, options?: { open?: boolean });
     close(): void;
@@ -7,8 +9,8 @@ declare module 'node:sqlite' {
   }
 
   export class StatementSync {
-    all(...params: any[]): any[];
-    get(...params: any[]): any;
-    run(...params: any[]): { changes: number; lastInsertRowid: number | bigint };
+    all(...params: SQLValue[]): Record<string, SQLValue>[];
+    get(...params: SQLValue[]): Record<string, SQLValue> | undefined;
+    run(...params: SQLValue[]): { changes: number; lastInsertRowid: number | bigint };
   }
 }

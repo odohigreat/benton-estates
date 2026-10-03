@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       message: 'Your enquiry has been received successfully. A Benton representative will contact you shortly.',
       referenceId: result.referenceId
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, error: error.issues[0]?.message || 'Validation error' },

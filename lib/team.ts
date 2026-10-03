@@ -13,26 +13,26 @@ export const team: TeamMember[] = [
   {
     name: 'Mr. Classics Oke Oteri',
     role: 'MD / CEO',
-    photo: '/images/team/ceo_benton_estates.png',
+    photo: '/images/team/ceo_benton_estates.jpg',
   },
   {
     name: 'Dr. Barry Wonder',
     role: 'Non-Executive Director',
-    photo: '/images/team/dr_barry_wonder.png',
+    photo: '/images/team/dr_barry_wonder.jpg',
   },
   {
     name: 'Eseoghene Emakunuya',
     role: 'Non-Executive Director',
-    photo: '/images/team/eseoghene_emakunuya.png',
+    photo: '/images/team/eseoghene_emakunuya.jpg',
   },
   {
     name: 'Sheila Akporherhe',
     role: 'Customer Care Services Representative',
-    photo: '/images/team/customer_service_rep.png',
+    photo: '/images/team/customer_service_rep.jpg',
   },
   {
     name: 'Samuel Ovie Ojogri',
     role: 'IT & Social Media Manager',
-    photo: '/images/team/samuel_ovie.png',
+    photo: '/images/team/samuel_ovie.jpg',
   },
 ];

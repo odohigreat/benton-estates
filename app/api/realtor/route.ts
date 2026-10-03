@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       message: 'Your Realtor Registration application has been submitted successfully.',
       applicationRef: result.applicationRef
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, error: error.issues[0]?.message || 'Validation error in submitted form' },
