@@ -1,18 +1,18 @@
-import React from 'react';
-import Link from 'next/link';
-import { 
-  Building2, 
-  Compass, 
-  Map, 
-  Home, 
-  TrendingUp, 
-  GraduationCap, 
-  Laptop, 
-  CheckCircle2, 
-  ArrowRight,
-  ShieldCheck
-} from 'lucide-react';
 import EnquiryForm from '@/components/forms/EnquiryForm';
+import PageHero from '@/components/ui/PageHero';
+import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
+  Compass,
+  GraduationCap,
+  Home,
+  Laptop,
+  Map,
+  ShieldCheck,
+  TrendingUp
+} from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Our Services | Benton Estates & Benton Homes & Development Limited',
@@ -130,27 +130,13 @@ export default function ServicesPage() {
 
   return (
     <div className="space-y-20 pb-20">
-      
+
       {/* Banner */}
-      <section className="bg-[#0A142F] text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <span className="text-xs uppercase tracking-widest font-bold text-[#E40C05] bg-red-950/60 border border-red-800 px-3 py-1 rounded-full inline-block">
-              Corporate Capabilities
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-black font-serif tracking-tight">
-              Our Professional Services
-            </h1>
-            <p className="text-slate-200 text-base leading-relaxed font-medium">
-              From land development and verified property sales to consulting, professional training, and digital property technology, Benton Estates is your trusted partner.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero eyebrow="Corporate Capabilities" title="Our Professional Services" description={<>From land development and verified property sales to consulting, professional training, and digital property technology, Benton Estates is your trusted partner.</>} />
 
       {/* Services Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-12">
+      <section className="benton-container">
+        <div className="services-editorial space-y-12">
           {services.map((service, index) => {
             const Icon = service.icon;
             const isEven = index % 2 === 1;
@@ -159,13 +145,12 @@ export default function ServicesPage() {
               <div
                 key={service.id}
                 id={service.id}
-                className={`bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 shadow-sm hover:shadow-md transition-shadow grid grid-cols-1 lg:grid-cols-12 gap-8 items-center ${
-                  isEven ? 'lg:flex-row-reverse' : ''
-                }`}
+                className={`bg-white rounded-lg border border-slate-200 p-8 sm:p-12 shadow-sm hover:shadow-md transition-shadow grid grid-cols-1 lg:grid-cols-12 gap-8 items-center ${isEven ? 'lg:flex-row-reverse' : ''
+                  }`}
               >
                 <div className="lg:col-span-7 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-xl ${service.bgColor} ${service.color} flex items-center justify-center shadow-xs`}>
+                    <div className={`w-12 h-12 rounded-md ${service.bgColor} ${service.color} flex items-center justify-center shadow-xs`}>
                       <Icon className="w-6 h-6" />
                     </div>
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -211,8 +196,8 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                <div className="lg:col-span-5 bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col justify-center text-center">
-                  <div className="p-4 bg-white rounded-xl shadow-xs border border-slate-100 mb-4">
+                <div className="lg:col-span-5 bg-slate-50 rounded-lg p-6 border border-slate-200 flex flex-col justify-center text-center">
+                  <div className="p-4 bg-white rounded-md shadow-xs border border-slate-100 mb-4">
                     <ShieldCheck className="w-8 h-8 text-[#0304CE] mx-auto mb-2" />
                     <span className="font-bold text-slate-900 text-sm block">Client Guarantee</span>
                     <p className="text-[11px] text-slate-500 mt-1">
@@ -221,7 +206,7 @@ export default function ServicesPage() {
                   </div>
                   <Link
                     href="/contact"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0304CE] hover:bg-[#143F9D] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-xl transition-all"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0304CE] hover:bg-[#143F9D] text-white text-xs font-bold uppercase tracking-wider py-3 px-4 rounded-md transition-all"
                   >
                     Schedule Consultation
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -234,8 +219,8 @@ export default function ServicesPage() {
       </section>
 
       {/* Consultation CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 sm:p-12">
+      <section className="benton-container">
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 sm:p-12">
           <div className="max-w-2xl mx-auto text-center space-y-4 mb-8">
             <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 font-serif">
               Have a Specific Development or Consulting Request?
@@ -244,7 +229,7 @@ export default function ServicesPage() {
               Send our advisory team your specific requirements and we will provide a detailed proposal.
             </p>
           </div>
-          <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md">
+          <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-lg border border-slate-200 shadow-md">
             <EnquiryForm defaultProperty="Custom Service Advisory" />
           </div>
         </div>

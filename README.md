@@ -70,7 +70,7 @@ Inspired structurally and visually by premier luxury real estate platforms like 
    - Deep-dive into all 7 business activities with booking actions.
 8. **Contact Us (`/contact`)**:
    - Verified address: Summer Plazza, 102 Effurun Sapele Road, Airport Junction, Effurun.
-   - Direct telephone line: `+2348038357773`.
+   - Direct telephone line: `+2348038535773`.
    - WhatsApp direct click with pre-filled enquiry parameters.
    - Live backend-persisted enquiry form.
 9. **Staff Administrative Portal (`/admin`)**:

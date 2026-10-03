@@ -1,120 +1,54 @@
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import EnquiryForm from '@/components/forms/EnquiryForm';
+import HomeHero from '@/components/home/HomeHero';
+import ListingBanner from '@/components/home/ListingBanner';
+import PropertySearchBar from '@/components/listings/PropertySearchBar';
+import Reveal from '@/components/motion/Reveal';
+import PropertyCard, { PropertyItem } from '@/components/ui/PropertyCard';
+import SectionHeading from '@/components/ui/SectionHeading';
+import { dbRepo } from '@/lib/db';
 import {
   ArrowRight,
-  ShieldCheck,
-  MapPin,
-  CheckCircle2,
   Building2,
+  CheckCircle2,
   Compass,
   GraduationCap,
   Laptop,
-  Phone,
+  MapPin,
   MessageCircle,
-  FileCheck2,
-  CalendarCheck,
-  TrendingUp,
+  Phone,
+  ShieldCheck,
   Sparkles
 } from 'lucide-react';
-import PropertyCard, { PropertyItem } from '@/components/ui/PropertyCard';
-import EnquiryForm from '@/components/forms/EnquiryForm';
-import { dbRepo } from '@/lib/db';
+import Image from 'next/image';
+import Link from 'next/link';
+import { connection } from 'next/server';
 
-export default function HomePage() {
+export default async function HomePage() {
+  await connection();
   const properties = dbRepo.listProperties() as unknown as PropertyItem[];
-  const elevationEstate = properties.find((p) => p.slug === 'elevation-estate') || properties[0];
+  const locations = dbRepo.listLocations().map(l => l.state);
+  // Temporary promotion; remove this and the banner below when the campaign ends.
+  const abujaListing = dbRepo.getPropertyBySlug('lugbe-4-bedroom-duplex-abuja') as PropertyItem | undefined;
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-16">
 
       {/* SECTION 1: HERO */}
-      <section className="relative -mt-24 sm:-mt-28 min-h-[92vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image with Cinematic Overlay */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/hero.jpg"
-            alt="Benton Estates Premier Developments"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center scale-105 animate-in fade-in zoom-in-95 duration-1000"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A142F]/90 via-[#0A142F]/75 to-black/50" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A142F] via-transparent to-transparent opacity-90" />
-        </div>
+      <HomeHero />
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:pt-44 text-center sm:text-left flex flex-col justify-center">
-          <div className="max-w-3xl space-y-6">
-            {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-semibold uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-[#E40C05] animate-ping" />
-              <span>Premier Real Estate in Delta State</span>
-            </div> */}
-
-            <h1 className="text-4xl sm:text-6xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] font-serif">
-              Your Trusted Partner in <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white">Quality Real Estate.</span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-slate-100 leading-relaxed font-medium max-w-2xl">
-              Discover thoughtfully developed, litigation-free properties and strategic real estate opportunities with Benton Estates. Upholding integrity, transparency, and timely delivery at every step.
-            </p>
-
-            {/* CTAs */}
-            <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Link
-                href="#properties"
-                className="inline-flex items-center justify-center gap-2.5 bg-[#0304CE] hover:bg-[#143F9D] text-white font-bold text-base px-8 py-4 rounded-xl shadow-lg hover:shadow-2xl transition-all"
-              >
-                Explore Properties
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md font-bold text-base px-8 py-4 rounded-xl transition-all"
-              >
-                Speak with an Advisor
-              </Link>
-            </div>
-
-            {/* Value Indicators Bar */}
-            <div className="pt-8 grid grid-cols-2 sm:grid-cols-3 gap-4 text-left border-t border-white/15">
-              <div className="flex items-start gap-2.5">
-                <ShieldCheck className="w-5 h-5 text-[#E40C05] shrink-0 mt-0.5" />
-                <div>
-                  <span className="text-white text-xs font-bold block">100% Litigation-Free</span>
-                  <span className="text-slate-100 text-xs font-semibold">Free from adverse claims</span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <FileCheck2 className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-                <div>
-                  <span className="text-white text-xs font-bold block">Registered Titles</span>
-                  <span className="text-slate-100 text-xs font-semibold">Deed &amp; Survey documentation</span>
-                </div>
-              </div>
-
-              <div className="col-span-2 sm:col-span-1 flex items-start gap-2.5">
-                <CalendarCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                <div>
-                  <span className="text-white text-xs font-bold block">Structured Installments</span>
-                  <span className="text-slate-100 text-xs font-semibold">0–12 month flexible plans</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Property search */}
+      <section className="benton-container home-search" aria-labelledby="home-search-title">
+        <h2 id="home-search-title" className="home-search-title">Find land or property to buy or rent</h2>
+        <PropertySearchBar locations={locations} />
       </section>
 
       {/* SECTION 2: ABOUT BENTON ESTATES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="benton-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
           {/* Left Column: Image */}
           <div className="lg:col-span-6 relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3] border border-slate-200">
+            <div className="relative rounded-lg overflow-hidden shadow-sm aspect-[4/3] border border-slate-200">
               <Image
                 src="/images/corporate-office.jpg"
                 alt="Benton Estates Consultation Lounge"
@@ -132,7 +66,7 @@ export default function HomePage() {
               About Benton Estates
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug font-serif">
+            <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight leading-snug font-serif">
               Building Sustainable Wealth Through Verified Real Estate.
             </h2>
 
@@ -141,7 +75,7 @@ export default function HomePage() {
             </p>
 
             <div className="space-y-4 pt-2">
-              <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#0304CE]">
+              <div className="p-4 rounded-md bg-slate-50 border-l-4 border-[#0304CE]">
                 <h4 className="text-xs uppercase font-bold text-[#0304CE] tracking-wider mb-1">
                   Our Stated Vision
                 </h4>
@@ -150,7 +84,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-50 border-l-4 border-[#E40C05]">
+              <div className="p-4 rounded-md bg-slate-50 border-l-4 border-[#E40C05]">
                 <h4 className="text-xs uppercase font-bold text-[#E40C05] tracking-wider mb-1">
                   Our Stated Mission
                 </h4>
@@ -173,20 +107,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* TEMPORARY: Abuja listing banner */}
+      {abujaListing && <ListingBanner property={abujaListing} eyebrow="New in Abuja" />}
+
       {/* SECTION 3: FEATURED PROPERTIES */}
-      <section id="properties" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="properties" className="benton-container">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-red-50 text-[#E40C05] text-xs font-bold uppercase tracking-wider mb-2">
-              Our Property Portfolio
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif">
-              Featured Estates &amp; Schemes
-            </h2>
-            <p className="text-slate-700 text-sm sm:text-base mt-1.5 max-w-xl font-medium">
-              Carefully planned residential and commercial land developments situated in high-growth corridors.
-            </p>
-          </div>
+          <SectionHeading eyebrow="Our Property Portfolio" title="Featured Estates &amp; Schemes">Carefully planned residential and commercial land developments situated in high-growth corridors.</SectionHeading>
 
           <Link
             href="/properties"
@@ -200,19 +127,19 @@ export default function HomePage() {
         {/* Property Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <Reveal key={property.id}><PropertyCard property={property} /></Reveal>
           ))}
         </div>
       </section>
 
       {/* SECTION 4: OUR SERVICES */}
-      <section className="bg-slate-50 py-20 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="home-services bg-slate-50 py-20 border-y border-slate-200">
+        <div className="benton-container">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 text-[#0304CE] text-xs font-bold uppercase tracking-wider">
               Comprehensive Real Estate Solutions
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif">
+            <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight font-serif">
               Our Core Services
             </h2>
             <p className="text-slate-700 text-sm sm:text-base font-medium">
@@ -222,9 +149,9 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div className="bg-white p-7 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center mb-5">
+                <div className="w-12 h-12 rounded-md bg-blue-50 text-[#0304CE] flex items-center justify-center mb-5">
                   <Building2 className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Property Development</h3>
@@ -239,9 +166,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div className="bg-white p-7 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-red-50 text-[#E40C05] flex items-center justify-center mb-5">
+                <div className="w-12 h-12 rounded-md bg-red-50 text-[#E40C05] flex items-center justify-center mb-5">
                   <Compass className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Real Estate Consulting</h3>
@@ -256,9 +183,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div className="bg-white p-7 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5">
+                <div className="w-12 h-12 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Land Sales &amp; Allocation</h3>
@@ -273,9 +200,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div className="bg-white p-7 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-5">
+                <div className="w-12 h-12 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center mb-5">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Training &amp; Mentoring</h3>
@@ -290,9 +217,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="bg-white p-7 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div className="bg-white p-7 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
+                <div className="w-12 h-12 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
                   <Laptop className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Real Estate Technology</h3>
@@ -301,15 +228,15 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="pt-5 mt-5 border-t border-slate-100">
-                <Link href="/services#tech" className="text-xs font-bold text-[#0304CE] hover:underline flex items-center gap-1">
+                <Link href="/services#technology" className="text-xs font-bold text-[#0304CE] hover:underline flex items-center gap-1">
                   Read Details <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-[#0304CE] to-[#143F9D] p-7 rounded-2xl text-white shadow-md flex flex-col justify-between">
+            <div className="bg-[#0304CE] p-7 rounded-lg text-white shadow-md flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-white/10 text-white flex items-center justify-center mb-5">
+                <div className="w-12 h-12 rounded-md bg-white/10 text-white flex items-center justify-center mb-5">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Become a Benton Realtor</h3>
@@ -320,7 +247,7 @@ export default function HomePage() {
               <div className="pt-5 mt-5 border-t border-white/20">
                 <Link
                   href="/become-a-realtor"
-                  className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-white bg-[#E40C05] hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white bg-[#E40C05] hover:bg-red-700 px-4 py-2 rounded-lg transition-colors"
                 >
                   Register as Realtor <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -332,12 +259,12 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 5: WHY BENTON ESTATES? (HOME VALUES) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="home-values benton-container">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 text-[#0304CE] text-xs font-bold uppercase tracking-wider">
             Our Guiding Philosophy
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif">
+          <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight font-serif">
             Why Choose Benton Estates?
           </h2>
           <p className="text-slate-700 text-sm sm:text-base font-medium">
@@ -347,8 +274,8 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-          <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-black mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
+          <div className="bg-white p-6 rounded-lg border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
+            <div className="w-12 h-12 rounded-md bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-semibold mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
               H
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Honesty</h3>
@@ -357,8 +284,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-black mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
+          <div className="bg-white p-6 rounded-lg border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
+            <div className="w-12 h-12 rounded-md bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-semibold mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
               O
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Ownership</h3>
@@ -367,8 +294,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-black mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
+          <div className="bg-white p-6 rounded-lg border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
+            <div className="w-12 h-12 rounded-md bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-semibold mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
               M
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Mindset of Service</h3>
@@ -377,8 +304,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-black mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
+          <div className="bg-white p-6 rounded-lg border-2 border-slate-100 hover:border-[#0304CE] transition-all shadow-xs group">
+            <div className="w-12 h-12 rounded-md bg-blue-50 text-[#0304CE] flex items-center justify-center text-xl font-semibold mb-4 group-hover:bg-[#0304CE] group-hover:text-white transition-colors">
               E
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Execution</h3>
@@ -391,8 +318,8 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 6: FEATURED DEVELOPMENT SPOTLIGHT (ELEVATION ESTATE) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#0A142F] text-white rounded-3xl overflow-hidden border-2 border-[#0304CE] shadow-2xl">
+      <section className="benton-container">
+        <div className="bg-[#0A142F] text-white rounded-lg overflow-hidden border-2 border-[#0304CE] shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-12">
 
             {/* Left Column: Image */}
@@ -404,7 +331,7 @@ export default function HomePage() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
-              <div className="absolute top-5 left-5 bg-[#E40C05] text-white text-xs font-black uppercase px-3 py-1.5 rounded-md tracking-wider shadow-lg">
+              <div className="absolute top-5 left-5 bg-[#E40C05] text-white text-xs font-semibold uppercase px-3 py-1.5 rounded-md tracking-wider shadow-sm">
                 Flagship Estate Development
               </div>
               <div className="absolute bottom-5 left-5 bg-black/70 backdrop-blur-md px-3.5 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5">
@@ -419,7 +346,7 @@ export default function HomePage() {
                 <span className="text-xs uppercase font-bold tracking-widest text-[#E40C05] block mb-1">
                   Benton Presents
                 </span>
-                <h3 className="text-2xl sm:text-4xl font-extrabold font-serif">
+                <h3 className="text-2xl sm:text-4xl font-semibold font-serif">
                   Elevation Estate, Ekrerahwe
                 </h3>
                 <p className="text-blue-200 text-xs sm:text-sm italic mt-1 font-medium">
@@ -427,6 +354,10 @@ export default function HomePage() {
                 </p>
 
                 <div className="mt-6 space-y-3 text-xs text-slate-200 font-medium">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span><strong className="text-white">Location:</strong> Behind Beta Glass Company, near the East–West Road</span>
+                  </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                     <span><strong className="text-white">Title:</strong> Registered Survey &amp; Deed of Assignment</span>
@@ -445,13 +376,14 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 rounded-xl bg-white/5 border border-white/10 flex items-baseline justify-between">
+                <div className="mt-6 p-4 rounded-md bg-white/5 border border-white/10 flex items-baseline justify-between">
                   <div>
                     <span className="text-[11px] text-slate-400 uppercase tracking-wider block font-semibold">
-                      Outright Investment
+                      Pre-launch Price
                     </span>
-                    <span className="text-2xl font-black text-white">₦1,195,000</span>
+                    <span className="text-2xl font-semibold text-white">₦1,195,000</span>
                     <span className="text-xs text-slate-400 ml-1">per 464 SQM</span>
+                    <span className="block text-xs text-slate-400 mt-1"><s>₦1,500,000</s> · Save ₦305,000</span>
                   </div>
                   <span className="text-xs text-emerald-300 bg-emerald-950/60 border border-emerald-800 px-2.5 py-1 rounded-md font-semibold">
                     0–12 Mos Plans Available
@@ -462,7 +394,7 @@ export default function HomePage() {
               <div className="pt-4 flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/properties/elevation-estate/subscribe"
-                  className="flex-1 inline-flex items-center justify-center gap-2 bg-[#E40C05] hover:bg-red-700 text-white font-bold text-sm py-3.5 px-6 rounded-xl transition-all shadow-md text-center"
+                  className="flex-1 inline-flex items-center justify-center gap-2 bg-[#E40C05] hover:bg-red-700 text-white font-bold text-sm py-3.5 px-6 rounded-md transition-all shadow-md text-center"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   Subscribe to This Estate
@@ -470,7 +402,7 @@ export default function HomePage() {
 
                 <Link
                   href="/properties/elevation-estate"
-                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm py-3.5 px-6 rounded-xl transition-all text-center"
+                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm py-3.5 px-6 rounded-md transition-all text-center"
                 >
                   View Full Details &amp; FAQs
                 </Link>
@@ -482,8 +414,8 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 7: CONTACT / CONSULTATION CALL TO ACTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 sm:p-14 shadow-sm">
+      <section className="benton-container">
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 sm:p-14 shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
             {/* Left Info Column */}
@@ -492,7 +424,7 @@ export default function HomePage() {
                 Start Your Real Estate Journey
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-serif leading-snug">
+              <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight font-serif leading-snug">
                 Let&apos;s Help You Find Your Next Property.
               </h2>
 
@@ -507,8 +439,8 @@ export default function HomePage() {
                   </div>
                   <div>
                     <span className="text-xs text-slate-400 font-semibold uppercase block">Telephone Line</span>
-                    <a href="tel:+2348038357773" className="font-bold text-slate-900 hover:text-[#0304CE]">
-                      +234 803 835 7773
+                    <a href="tel:+2348038535773" className="font-bold text-slate-900 hover:text-[#0304CE]">
+                      +234 803 853 5773
                     </a>
                   </div>
                 </div>
@@ -520,7 +452,7 @@ export default function HomePage() {
                   <div>
                     <span className="text-xs text-slate-400 font-semibold uppercase block">Instant WhatsApp Support</span>
                     <a
-                      href="https://wa.me/2348038357773?text=Hello%20Benton%20Estates,%20I%20would%20like%20to%20schedule%20a%20property%20inspection."
+                      href="https://wa.me/2348038535773?text=Hello%20Benton%20Estates,%20I%20would%20like%20to%20schedule%20a%20property%20inspection."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-bold text-emerald-600 hover:text-emerald-700"
@@ -545,7 +477,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Form Column */}
-            <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md">
+            <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-lg border border-slate-200 shadow-md">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-900">Request a Free Consultation</h3>
                 <p className="text-xs text-slate-600 mt-1 font-medium">

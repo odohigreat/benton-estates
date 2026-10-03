@@ -152,10 +152,134 @@ function initSchema(db: DatabaseSync) {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS agents (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      position TEXT NOT NULL,
+      email TEXT,
+      phone TEXT,
+      photo TEXT,
+      bio TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `);
 
+  // Marketplace columns are added in place so existing databases upgrade without a reset.
+  ensureColumn(db, 'properties', 'listing_type', "TEXT NOT NULL DEFAULT 'sale'");
+  ensureColumn(db, 'properties', 'video_url', 'TEXT');
+  ensureColumn(db, 'properties', 'agent_id', 'TEXT REFERENCES agents(id)');
+  ensureColumn(db, 'properties', 'floor_plans', 'TEXT');
+  ensureColumn(db, 'properties', 'image_caption', 'TEXT');
+
   seedProperties(db);
+  seedAgents(db);
+  seedAbujaListing(db);
+
+  // Company line changed from +2348038357773 (October 2026).
+  db.prepare("UPDATE agents SET phone = '+2348038535773' WHERE phone = '+2348038357773'").run();
 }
+
+// Details from the architectural drawings (Arc. Yemi O. Oladapo, sheets A01–A08); price and title still to be supplied.
+function seedAbujaListing(db: DatabaseSync) {
+  const now = new Date().toISOString();
+  const listing = {
+    slug: 'lugbe-4-bedroom-duplex-abuja',
+    name: '4-Bedroom Duplex, Lugbe 1 Layout',
+    tagline: 'Under construction • Three detached duplexes in Lugbe, Abuja',
+    location: 'Lugbe 1 Layout, Cadastral Zone E30',
+    state: 'Abuja',
+    category: 'RESIDENTIAL',
+    price: 0,
+    price_formatted: 'Price on Request',
+    price_note: 'Contact us for current pricing',
+    plot_size: '4 Bedrooms · approx. 330 SQM plot',
+    title_type: 'Title documentation to be published',
+    status: 'UNDER CONSTRUCTION',
+    description: 'A proposed residential development of three detached 4-bedroom duplexes at Lugbe 1 Layout, Cadastral Zone E30, FCT Abuja. Each two-storey home sits on its own plot of approximately 330 SQM with a private driveway, and construction is underway with foundations in progress. The ground floor has a living room, dining area, kitchen with store, a guest bedroom and a guest toilet; the first floor has the master bedroom with built-in wardrobe, two further bedrooms, a walk-in closet and two balconies.',
+    highlights: ['4 bedrooms, 4 bathrooms plus guest toilet', 'Construction underway — foundations in progress', 'Private driveway with parking for up to 5 cars', 'Two first-floor balconies'],
+    features: ['Living room, dining area and kitchen with store', 'Ground-floor guest bedroom', 'Master bedroom with built-in wardrobe', 'Walk-in closet', 'Bronze powder-coated aluminium windows with tinted glazing', 'Long-span aluminium roofing'],
+    image: '/images/abuja-lugbe/render.jpg',
+    gallery: ['/images/abuja-lugbe/site-progress-1.jpg', '/images/abuja-lugbe/site-progress-2.jpg'],
+    floor_plans: [
+      { src: '/images/abuja-lugbe/ground-floor.jpg', label: 'Ground floor' },
+      { src: '/images/abuja-lugbe/first-floor.jpg', label: 'First floor' },
+    ],
+    image_caption: 'Artist’s impression. Site photographs show construction in progress.',
+  };
+
+  db.prepare(`
+    INSERT INTO properties (
+      id, slug, name, tagline, location, state, category, price, price_formatted,
+      price_note, plot_size, title_type, is_featured, status, description,
+      highlights, features, image, gallery, floor_plans, image_caption,
+      listing_type, agent_id, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, 'sale', 'agent-sales-desk', ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      slug = excluded.slug, name = excluded.name, tagline = excluded.tagline, location = excluded.location,
+      state = excluded.state, category = excluded.category, price = excluded.price,
+      price_formatted = excluded.price_formatted, price_note = excluded.price_note,
+      plot_size = excluded.plot_size, title_type = excluded.title_type, status = excluded.status,
+      description = excluded.description, highlights = excluded.highlights, features = excluded.features,
+      image = excluded.image, gallery = excluded.gallery, floor_plans = excluded.floor_plans,
+      image_caption = excluded.image_caption
+  `).run(
+    'prop-abuja', listing.slug, listing.name, listing.tagline, listing.location, listing.state,
+    listing.category, listing.price, listing.price_formatted, listing.price_note, listing.plot_size,
+    listing.title_type, listing.status, listing.description, JSON.stringify(listing.highlights),
+    JSON.stringify(listing.features), listing.image, JSON.stringify(listing.gallery),
+    JSON.stringify(listing.floor_plans), listing.image_caption, now, now
+  );
+}
+
+function ensureColumn(db: DatabaseSync, table: string, column: string, definition: string) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+  if (!columns.some(c => c.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+function seedAgents(db: DatabaseSync) {
+  const countRow = db.prepare('SELECT COUNT(*) as count FROM agents').get() as { count: number };
+  if (countRow && countRow.count > 0) {
+    return;
+  }
+
+  const now = new Date().toISOString();
+
+  // Company desk until individual agent profiles (name, photo, email, position) are supplied.
+  db.prepare(`
+    INSERT INTO agents (id, name, position, email, phone, photo, bio, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    'agent-sales-desk',
+    'Benton Sales Desk',
+    'Sales & Allocation Office, Effurun',
+    'enquiries@bentonhomes.com',
+    '+2348038535773',
+    null,
+    'Handles inspections, documentation and plot allocation from the Summer Plazza head office.',
+    now,
+    now
+  );
+
+  db.prepare('UPDATE properties SET agent_id = ? WHERE agent_id IS NULL').run('agent-sales-desk');
+}
+
+export interface PropertySearch {
+  type?: 'sale' | 'rent';
+  location?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+const propertyWithAgent = `
+  SELECT p.*, a.name AS agent_name, a.position AS agent_position, a.photo AS agent_photo
+  FROM properties p
+  LEFT JOIN agents a ON a.id = p.agent_id
+`;
 
 function seedProperties(db: DatabaseSync) {
   const countRow = db.prepare('SELECT COUNT(*) as count FROM properties').get() as { count: number };
@@ -600,11 +724,49 @@ export const dbRepo = {
   // Properties
   listProperties() {
     const db = getDb();
-    return db.prepare('SELECT * FROM properties ORDER BY is_featured DESC, created_at DESC').all();
+    return db.prepare(`${propertyWithAgent} ORDER BY p.is_featured DESC, p.created_at DESC`).all();
+  },
+
+  searchProperties(search: PropertySearch) {
+    const db = getDb();
+    const where: string[] = [];
+    const params: (string | number)[] = [];
+    if (search.type) { where.push('p.listing_type = ?'); params.push(search.type); }
+    if (search.location) { where.push('p.state = ?'); params.push(search.location); }
+    if (search.category) { where.push('p.category = ?'); params.push(search.category); }
+    // Listings without a published price (stored as 0) only match unfiltered searches.
+    if (search.minPrice !== undefined || search.maxPrice !== undefined) where.push('p.price > 0');
+    if (search.minPrice !== undefined) { where.push('p.price >= ?'); params.push(search.minPrice); }
+    if (search.maxPrice !== undefined) { where.push('p.price <= ?'); params.push(search.maxPrice); }
+    const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    return db.prepare(`${propertyWithAgent} ${clause} ORDER BY p.is_featured DESC, p.created_at DESC`).all(...params);
+  },
+
+  listLocations() {
+    const db = getDb();
+    return db.prepare(`
+      SELECT state, COUNT(*) AS count, MIN(image) AS image, GROUP_CONCAT(DISTINCT location) AS areas
+      FROM properties GROUP BY state ORDER BY count DESC, state
+    `).all() as { state: string; count: number; image: string; areas: string }[];
   },
 
   getPropertyBySlug(slug: string) {
     const db = getDb();
-    return db.prepare('SELECT * FROM properties WHERE slug = ?').get(slug);
+    return db.prepare(`${propertyWithAgent} WHERE p.slug = ?`).get(slug);
+  },
+
+  // Agents
+  listAgents() {
+    const db = getDb();
+    return db.prepare(`
+      SELECT a.*, COUNT(p.id) AS listing_count
+      FROM agents a LEFT JOIN properties p ON p.agent_id = a.id
+      GROUP BY a.id ORDER BY a.name
+    `).all();
+  },
+
+  getAgent(id: string) {
+    const db = getDb();
+    return db.prepare('SELECT * FROM agents WHERE id = ?').get(id);
   }
 };

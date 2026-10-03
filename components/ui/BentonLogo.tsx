@@ -1,6 +1,5 @@
-import React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface BentonLogoProps {
   className?: string;
@@ -9,6 +8,9 @@ interface BentonLogoProps {
   showSubtitle?: boolean;
 }
 
+// Emblem source is 280×212; heights keep the stacked lockup inside the 88px header.
+const emblemHeight = { sm: 31, md: 39, lg: 55 };
+
 export default function BentonLogo({
   className = '',
   variant = 'color',
@@ -16,46 +18,28 @@ export default function BentonLogo({
   showSubtitle = false
 }: BentonLogoProps) {
   const isWhite = variant === 'white';
-  
-  // Height sizing
-  const heightClasses = {
-    sm: 'h-9',
-    md: 'h-12',
-    lg: 'h-16'
-  }[size];
+  const height = emblemHeight[size];
 
   return (
-    <Link href="/" className={`inline-flex items-center gap-3 group ${className}`}>
-      {/* Official Benton Logo Graphic */}
-      <div className="relative flex items-center justify-center">
-        <Image
-          src="/images/benton-logo-transparent.png"
-          alt="Benton Estates Logo"
-          width={size === 'lg' ? 64 : size === 'md' ? 48 : 36}
-          height={size === 'lg' ? 48 : size === 'md' ? 36 : 28}
-          className="object-contain"
-          priority
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <div className="flex items-baseline gap-1.5">
-          <span className={`font-black tracking-wider uppercase text-lg sm:text-xl font-serif ${isWhite ? 'text-white' : 'text-[#0304CE]'}`}>
-            BENTON
-          </span>
-          <span className={`font-bold tracking-tight text-xs sm:text-sm uppercase ${isWhite ? 'text-gray-300' : 'text-[#143F9D]'}`}>
-            ESTATES
-          </span>
-        </div>
-        {/* Red signature accent bar */}
-        <div className="h-[2.5px] w-full bg-[#E40C05] rounded-full mt-0.5" />
-        
-        {showSubtitle && (
-          <span className={`text-[10px] tracking-tight font-medium mt-1 ${isWhite ? 'text-gray-400' : 'text-slate-500'}`}>
-            Benton Homes &amp; Development Ltd
-          </span>
-        )}
-      </div>
+    <Link href="/" aria-label="Benton Homes — home" className={`inline-flex flex-col items-center text-center shrink-0 ${className}`}>
+      <Image
+        src="/images/benton-logo-transparent.png"
+        alt=""
+        width={Math.round(height * 280 / 212)}
+        height={height}
+        className="object-contain"
+      />
+      {/* -mt offsets the ~9% transparent padding baked into the emblem PNG. */}
+      <span className="flex items-baseline justify-center gap-1.5 leading-none -mt-1">
+        <span className={`font-semibold tracking-wider uppercase font-serif ${size === 'lg' ? 'text-lg' : 'text-sm sm:text-base'} ${isWhite ? 'text-white' : 'text-brand-blue'}`}>
+          HOMES
+        </span>
+      </span>
+      {showSubtitle && (
+        <span className={`text-[10px] leading-tight tracking-tight font-medium mt-0.5 ${isWhite ? 'text-gray-400' : 'text-slate-500'}`}>
+          Benton Homes &amp; Development Ltd
+        </span>
+      )}
     </Link>
   );
 }

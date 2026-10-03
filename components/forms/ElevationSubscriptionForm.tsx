@@ -1,23 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { 
-  ShieldCheck, 
-  CheckCircle2, 
-  AlertCircle, 
-  Loader2, 
-  ArrowRight, 
-  Calculator, 
-  ChevronDown, 
-  ChevronUp, 
-  FileText, 
-  HelpCircle,
-  Building,
-  UserCheck
+import FormFeedback from '@/components/ui/FormFeedback';
+import FormProgress from '@/components/ui/FormProgress';
+import {
+  AlertCircle,
+  ArrowRight,
+  Calculator,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Loader2,
+  ShieldCheck
 } from 'lucide-react';
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
+import Image from 'next/image';
+import React, { useId, useState } from 'react';
 
 export default function ElevationSubscriptionForm() {
+  const formId = useId();
+  const reduced = useReducedMotion();
   const [formData, setFormData] = useState({
     // Section 1: Subscriber Details
     title: 'Mr.',
@@ -52,7 +54,7 @@ export default function ElevationSubscriptionForm() {
     plotType: 'Residential', // Residential | Commercial plot
     numberOfPlots: 1,
     plotSize: '464 SQM',
-    paymentPlan: '3 Months', // 3 Months | 6 Months | Outright
+    paymentPlan: 'Outright (0–3 Months)', // 3 Months | 6 Months | Outright
     isCornerPiece: false,
     declarationName: '',
     declarationDate: new Date().toISOString().split('T')[0],
@@ -71,7 +73,7 @@ export default function ElevationSubscriptionForm() {
     acceptanceDate: new Date().toISOString().split('T')[0]
   });
 
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [expandedFaqs, setExpandedFaqs] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState<{
     ref: string;
@@ -186,7 +188,7 @@ export default function ElevationSubscriptionForm() {
       } else {
         setErrorMessage(data.error || 'Failed to submit application. Please review your entries.');
       }
-    } catch (err) {
+    } catch {
       setErrorMessage('Network connection error. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -195,21 +197,21 @@ export default function ElevationSubscriptionForm() {
 
   if (submissionSuccess) {
     return (
-      <div className="bg-white rounded-2xl border border-emerald-200 p-8 sm:p-12 shadow-xl text-center max-w-2xl mx-auto">
+      <FormFeedback kind="success" className="bg-white rounded-lg border border-emerald-200 p-8 sm:p-12 shadow-sm text-center max-w-2xl mx-auto">
         <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xs">
           <CheckCircle2 className="w-10 h-10" />
         </div>
         <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block mb-3">
           Estate Subscription Registered
         </span>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mb-3">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-3">
           Subscription Received, {submissionSuccess.subscriberName}!
         </h2>
         <p className="text-slate-600 text-sm leading-relaxed mb-6">
           Your application for land allocation at <strong>Elevation Estate, Ekrerahwe</strong> has been securely submitted. A Benton customer relationship officer will contact you with your starter pack and official payment guidance.
         </p>
 
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6 text-left space-y-2.5 text-sm">
+        <div className="bg-slate-50 border border-slate-200 rounded-md p-5 mb-6 text-left space-y-2.5 text-sm">
           <div className="flex justify-between items-center">
             <span className="text-slate-500">Subscription Ref:</span>
             <span className="font-mono font-bold text-[#0304CE] text-base">{submissionSuccess.ref}</span>
@@ -239,10 +241,10 @@ export default function ElevationSubscriptionForm() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
-            href={`https://wa.me/2348038357773?text=Hello%20Benton%20Estates,%20I%20have%20completed%20the%20Elevation%20Estate%20subscription.%20My%20Reference%20is%20${encodeURIComponent(submissionSuccess.ref)}`}
+            href={`https://wa.me/2348038535773?text=Hello%20Benton%20Estates,%20I%20have%20completed%20the%20Elevation%20Estate%20subscription.%20My%20Reference%20is%20${encodeURIComponent(submissionSuccess.ref)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold text-sm hover:bg-emerald-600 transition-all shadow-sm"
+            className="inline-flex items-center justify-center gap-2 bg-[#167a45] text-white px-6 py-3 rounded-lg font-bold text-sm hover:bg-emerald-600 transition-all shadow-sm"
           >
             Confirm on WhatsApp
           </a>
@@ -253,15 +255,15 @@ export default function ElevationSubscriptionForm() {
             Submit Another Form
           </button>
         </div>
-      </div>
+      </FormFeedback>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden max-w-4xl mx-auto">
+    <div className="benton-form max-w-4xl mx-auto">
       {/* Form Header */}
-      <div className="bg-[#0304CE] text-white p-6 sm:p-8 text-center relative">
-        <div className="inline-block bg-white px-4 py-2 rounded-xl mb-4 shadow-md">
+      <div className="benton-form-header">
+        <div className="inline-block bg-white px-4 py-2 rounded-md mb-4 shadow-md">
           <Image
             src="/images/benton-logo-transparent.png"
             alt="Benton Logo"
@@ -273,7 +275,7 @@ export default function ElevationSubscriptionForm() {
         <span className="text-xs uppercase tracking-widest text-red-200 font-bold block mb-1">
           Benton Presents
         </span>
-        <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-wider font-serif">
+        <h2 className="text-2xl sm:text-4xl font-semibold uppercase tracking-wider font-serif">
           ELEVATION ESTATE, EKRERAHWE
         </h2>
         <div className="h-1 w-24 bg-[#E40C05] mx-auto my-2 rounded-full" />
@@ -285,27 +287,28 @@ export default function ElevationSubscriptionForm() {
         </p>
       </div>
 
+      <FormProgress sections={[{ id: 'subscription-details', label: 'Your details' }, { id: 'subscription-kin', label: 'Next of kin' }, { id: 'subscription-plots', label: 'Plot selection' }, { id: 'subscription-referral', label: 'Referral' }, { id: 'subscription-terms', label: 'Terms & signature' }]} />
       <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-10">
         {errorMessage && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
+          <FormFeedback className="p-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0 text-[#E40C05]" />
             <span>{errorMessage}</span>
-          </div>
+          </FormFeedback>
         )}
 
         {/* SECTION 1: SUBSCRIBER'S DETAILS */}
-        <section className="space-y-4">
-          <div className="bg-[#0304CE] text-white py-2.5 px-4 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center justify-between">
+        <section id="subscription-details" className="space-y-4">
+          <h2 className="bg-[#0304CE] text-white py-2.5 px-4 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center justify-between">
             <span>SECTION 1: SUBSCRIBER&apos;S DETAILS</span>
             <span className="text-[11px] text-blue-200 font-normal">Fields with (*) are mandatory</span>
-          </div>
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-title`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Title <span className="text-[#E40C05]">*</span>
               </label>
-              <select
+              <select id={`${formId}-title`}
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none bg-white"
@@ -317,10 +320,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-surname`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Surname <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-surname`}
                 type="text"
                 required
                 placeholder="Surname"
@@ -331,10 +334,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-otherNames`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Other Names <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-otherNames`}
                 type="text"
                 required
                 placeholder="First &amp; Middle Names"
@@ -345,10 +348,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div className="md:col-span-3">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-spouseName`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Name of Spouse (If Applicable)
               </label>
-              <input
+              <input id={`${formId}-spouseName`}
                 type="text"
                 placeholder="Spouse Surname &amp; Other Names"
                 value={formData.spouseName}
@@ -358,10 +361,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div className="md:col-span-3">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-address`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Residential Address <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-address`}
                 type="text"
                 required
                 placeholder="Current physical residential address"
@@ -372,10 +375,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-dob`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Date of Birth <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-dob`}
                 type="date"
                 required
                 value={formData.dob}
@@ -385,10 +388,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-gender`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Gender <span className="text-[#E40C05]">*</span>
               </label>
-              <select
+              <select id={`${formId}-gender`}
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none bg-white"
@@ -399,10 +402,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-maritalStatus`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Marital Status <span className="text-[#E40C05]">*</span>
               </label>
-              <select
+              <select id={`${formId}-maritalStatus`}
                 value={formData.maritalStatus}
                 onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none bg-white"
@@ -414,10 +417,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-nationality`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Nationality <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-nationality`}
                 type="text"
                 required
                 value={formData.nationality}
@@ -427,10 +430,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-occupation`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Occupation
               </label>
-              <input
+              <input id={`${formId}-occupation`}
                 type="text"
                 placeholder="e.g. Civil Engineer, Trader, Banker"
                 value={formData.occupation}
@@ -440,10 +443,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-employerName`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Employer&apos;s Name / Business
               </label>
-              <input
+              <input id={`${formId}-employerName`}
                 type="text"
                 placeholder="Company / Enterprise name"
                 value={formData.employerName}
@@ -453,10 +456,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-natureOfBusiness`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Nature of Business
               </label>
-              <input
+              <input id={`${formId}-natureOfBusiness`}
                 type="text"
                 placeholder="e.g. Oil & Gas, Commerce, Tech"
                 value={formData.natureOfBusiness}
@@ -466,10 +469,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-yearsOfEmployment`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Years of Employment / Business
               </label>
-              <input
+              <input id={`${formId}-yearsOfEmployment`}
                 type="text"
                 placeholder="e.g. 5 years"
                 value={formData.yearsOfEmployment}
@@ -479,10 +482,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-countryOfResidence`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Country of Residence
               </label>
-              <input
+              <input id={`${formId}-countryOfResidence`}
                 type="text"
                 value={formData.countryOfResidence}
                 onChange={(e) => setFormData({ ...formData, countryOfResidence: e.target.value })}
@@ -491,10 +494,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-languageSpoken`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Language Spoken
               </label>
-              <input
+              <input id={`${formId}-languageSpoken`}
                 type="text"
                 value={formData.languageSpoken}
                 onChange={(e) => setFormData({ ...formData, languageSpoken: e.target.value })}
@@ -503,10 +506,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-email`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Email Address <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-email`}
                 type="email"
                 required
                 placeholder="subscriber@example.com"
@@ -517,10 +520,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-mobileNumber`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Mobile Number <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-mobileNumber`}
                 type="tel"
                 required
                 placeholder="+234..."
@@ -531,30 +534,29 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
+              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
                 Identification Card Type <span className="text-[#E40C05]">*</span>
-              </label>
-              <div className="flex flex-wrap items-center gap-4">
-                {['National ID Card', "Driver's Licence", 'International Passport', 'NIN'].map((idType) => (
-                  <label key={idType} className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="idType"
-                      checked={formData.idType === idType}
-                      onChange={() => setFormData({ ...formData, idType })}
-                      className="text-[#0304CE] focus:ring-[#0304CE]"
-                    />
-                    <span>{idType}</span>
-                  </label>
-                ))}
-              </div>
+              </legend><div className="flex flex-wrap items-center gap-4">
+                  {['National ID Card', "Driver's Licence", 'International Passport', 'NIN'].map((idType) => (
+                    <label key={idType} className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="idType"
+                        checked={formData.idType === idType}
+                        onChange={() => setFormData({ ...formData, idType })}
+                        className="text-[#0304CE] focus:ring-[#0304CE]"
+                      />
+                      <span>{idType}</span>
+                    </label>
+                  ))}
+                </div></fieldset>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-otherIncome`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Other Source of Income (If Any)
               </label>
-              <input
+              <input id={`${formId}-otherIncome`}
                 type="text"
                 placeholder="Optional"
                 value={formData.otherIncome}
@@ -584,8 +586,8 @@ export default function ElevationSubscriptionForm() {
                 </div>
               </div>
               {formData.isPep === 'Yes' && (
-                <div className="mt-2">
-                  <input
+                <div className="mt-2"><label htmlFor={`${formId}-pepCategory`} className="block text-xs font-bold mb-2">PEP category</label>
+                  <input id={`${formId}-pepCategory`}
                     type="text"
                     placeholder="If YES, what category? (e.g. Government appointee, elected official, relative of PEP)"
                     value={formData.pepCategory}
@@ -599,17 +601,17 @@ export default function ElevationSubscriptionForm() {
         </section>
 
         {/* SECTION 2: NEXT OF KIN */}
-        <section className="space-y-4">
-          <div className="bg-[#0304CE] text-white py-2.5 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
+        <section id="subscription-kin" className="space-y-4">
+          <h2 className="bg-[#0304CE] text-white py-2.5 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
             SECTION 2: NEXT OF KIN
-          </div>
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-nokName`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Name <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-nokName`}
                 type="text"
                 required
                 placeholder="Full name of Next of Kin"
@@ -620,10 +622,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-nokPhone`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Phone Number <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-nokPhone`}
                 type="tel"
                 required
                 placeholder="+234..."
@@ -634,10 +636,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-nokEmail`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Email Address
               </label>
-              <input
+              <input id={`${formId}-nokEmail`}
                 type="email"
                 placeholder="kin@example.com (Optional)"
                 value={formData.nokEmail}
@@ -647,10 +649,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-nokAddress`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Residential Address <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-nokAddress`}
                 type="text"
                 required
                 placeholder="Physical address of Next of Kin"
@@ -663,12 +665,12 @@ export default function ElevationSubscriptionForm() {
         </section>
 
         {/* SECTION 3: SUBSCRIBER'S DECLARATION & PLOT SELECTIONS */}
-        <section className="space-y-4">
-          <div className="bg-[#0304CE] text-white py-2.5 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
+        <section id="subscription-plots" className="space-y-4">
+          <h2 className="bg-[#0304CE] text-white py-2.5 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
             SECTION 3: SUBSCRIBER&apos;S DECLARATION &amp; PLOT SPECIFICATION
-          </div>
+          </h2>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
+          <div className="p-4 rounded-md bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
             <p className="font-serif italic text-slate-800">
               &quot;I hereby affirm that all information provided as a requirement for the purchase of the land in Elevation Estate Ekrerhavwe, located in Ughelli North Local Government Area of Delta State, is true and any false or inaccurate information given by me may result in the decline of my application.&quot;
             </p>
@@ -705,10 +707,10 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-numberOfPlots`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Number of Plots <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-numberOfPlots`}
                 type="number"
                 min={1}
                 max={50}
@@ -721,23 +723,22 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
+              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
                 Payment Plan <span className="text-[#E40C05]">*</span>
-              </label>
-              <div className="flex flex-col gap-1.5">
-                {['Outright (0–3 Months)', '6 Months', '12 Months'].map((plan) => (
-                  <label key={plan} className="flex items-center gap-2 text-xs text-slate-800 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentPlan"
-                      checked={formData.paymentPlan === plan}
-                      onChange={() => setFormData({ ...formData, paymentPlan: plan })}
-                      className="text-[#0304CE] focus:ring-[#0304CE]"
-                    />
-                    <span>{plan}</span>
-                  </label>
-                ))}
-              </div>
+              </legend><div className="flex flex-col gap-1.5">
+                  {['Outright (0–3 Months)', '6 Months', '12 Months'].map((plan) => (
+                    <label key={plan} className="flex items-center gap-2 text-xs text-slate-800 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="paymentPlan"
+                        checked={formData.paymentPlan === plan}
+                        onChange={() => setFormData({ ...formData, paymentPlan: plan })}
+                        className="text-[#0304CE] focus:ring-[#0304CE]"
+                      />
+                      <span>{plan}</span>
+                    </label>
+                  ))}
+                </div></fieldset>
             </div>
 
             <div className="sm:col-span-2 md:col-span-3 pt-2 border-t border-slate-100">
@@ -754,7 +755,7 @@ export default function ElevationSubscriptionForm() {
           </div>
 
           {/* Interactive Calculator Box */}
-          <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-200">
+          <div className="investment-summary">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-[#0304CE] flex items-center gap-1.5">
                 <Calculator className="w-4 h-4" />
@@ -789,7 +790,7 @@ export default function ElevationSubscriptionForm() {
             </div>
 
             <div className="text-[11px] text-slate-500 space-y-1">
-              <span className="font-semibold text-slate-700 block">Documentation Fees Payable (FAQ #8):</span>
+              <span className="font-semibold text-slate-700 block">Documentation Fees Payable (FAQ #8):</span><span className="block">Total documentation fees: ₦{totalAncillaryFees.toLocaleString()} · Development fee to be determined later.</span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
                 <span>• Deed of Assignment: ₦{(100000 * numPlots).toLocaleString()}</span>
                 <span>• Registered Survey Fee: ₦{(200000 * numPlots).toLocaleString()}</span>
@@ -800,28 +801,28 @@ export default function ElevationSubscriptionForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-declarationName`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Subscriber Signature Name <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-declarationName`}
                 type="text"
                 required
                 placeholder="Type full legal name as digital signature"
                 value={formData.declarationName}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
+                onChange={(e) => setFormData({
+                  ...formData,
                   declarationName: e.target.value,
-                  signatureData: e.target.value 
+                  signatureData: e.target.value
                 })}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm font-serif italic focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label htmlFor={`${formId}-declarationDate`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
                 Date <span className="text-[#E40C05]">*</span>
               </label>
-              <input
+              <input id={`${formId}-declarationDate`}
                 type="date"
                 required
                 value={formData.declarationDate}
@@ -833,16 +834,16 @@ export default function ElevationSubscriptionForm() {
         </section>
 
         {/* FOR REFERRAL DETAILS */}
-        <section className="space-y-4">
-          <div className="bg-slate-100 text-slate-700 py-2 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-between border border-slate-200">
+        <section id="subscription-referral" className="space-y-4">
+          <h2 className="bg-slate-100 text-slate-700 py-2 px-4 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-between border border-slate-200">
             <span>FOR REFERRAL DETAILS (OPTIONAL)</span>
             <span className="text-[11px] text-slate-500 font-normal">If referred by an authorized realtor</span>
-          </div>
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1">
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Referral Name</label>
-              <input
+              <label htmlFor={`${formId}-referralName`} className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Referral Name</label>
+              <input id={`${formId}-referralName`}
                 type="text"
                 placeholder="Name"
                 value={formData.referralName}
@@ -851,8 +852,8 @@ export default function ElevationSubscriptionForm() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Date</label>
-              <input
+              <label htmlFor={`${formId}-referralDate`} className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Date</label>
+              <input id={`${formId}-referralDate`}
                 type="date"
                 value={formData.referralDate}
                 onChange={(e) => setFormData({ ...formData, referralDate: e.target.value })}
@@ -860,8 +861,8 @@ export default function ElevationSubscriptionForm() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Phone No</label>
-              <input
+              <label htmlFor={`${formId}-referralPhone`} className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Phone No</label>
+              <input id={`${formId}-referralPhone`}
                 type="tel"
                 placeholder="+234..."
                 value={formData.referralPhone}
@@ -870,8 +871,8 @@ export default function ElevationSubscriptionForm() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Email</label>
-              <input
+              <label htmlFor={`${formId}-referralEmail`} className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Email</label>
+              <input id={`${formId}-referralEmail`}
                 type="email"
                 placeholder="realtor@email.com"
                 value={formData.referralEmail}
@@ -883,8 +884,8 @@ export default function ElevationSubscriptionForm() {
         </section>
 
         {/* PAGE 2: FREQUENTLY ASKED QUESTIONS / TERMS AND CONDITIONS OF PURCHASE */}
-        <section className="space-y-4 pt-4 border-t-2 border-slate-200">
-          <div className="bg-[#0A142F] text-white p-4 rounded-xl flex items-center justify-between">
+        <section id="subscription-terms" className="space-y-4 pt-4 border-t-2 border-slate-200">
+          <div className="bg-[#0A142F] text-white p-4 rounded-md flex items-center justify-between">
             <div>
               <span className="text-xs uppercase font-semibold text-blue-300 block">Page 2 Documentation</span>
               <h3 className="text-lg font-bold">FREQUENTLY ASKED QUESTIONS / TERMS AND CONDITIONS</h3>
@@ -898,12 +899,15 @@ export default function ElevationSubscriptionForm() {
 
           <div className="space-y-2">
             {faqs.map((faq, idx) => {
-              const isOpen = expandedFaq === idx;
+              const isOpen = expandedFaqs.includes(idx);
               return (
-                <div key={idx} className="border border-slate-200 rounded-xl overflow-hidden transition-colors bg-white">
+                <div key={idx} className="terms-accordion overflow-hidden bg-white">
                   <button
                     type="button"
-                    onClick={() => setExpandedFaq(isOpen ? null : idx)}
+                    aria-expanded={isOpen}
+                    aria-controls={`${formId}-faq-${idx}`}
+                    id={`${formId}-faq-trigger-${idx}`}
+                    onClick={() => setExpandedFaqs(previous => isOpen ? previous.filter(item => item !== idx) : [...previous, idx])}
                     className="w-full p-3.5 text-left flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors"
                   >
                     <span className="font-bold text-slate-800 text-xs sm:text-sm">
@@ -915,11 +919,11 @@ export default function ElevationSubscriptionForm() {
                       <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                     )}
                   </button>
-                  {isOpen && (
-                    <div className="p-4 bg-slate-50/80 border-t border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-line">
+                  <AnimatePresence initial={false}>{isOpen && (
+                    <m.div id={`${formId}-faq-${idx}`} role="region" aria-labelledby={`${formId}-faq-trigger-${idx}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : 0.15 }} className="p-4 bg-slate-50/80 border-t border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-line">
                       {faq.a}
-                    </div>
-                  )}
+                    </m.div>
+                  )}</AnimatePresence>
                 </div>
               );
             })}
@@ -928,15 +932,15 @@ export default function ElevationSubscriptionForm() {
           <div className="text-center pt-1">
             <button
               type="button"
-              onClick={() => setExpandedFaq(expandedFaq !== null ? null : 0)}
+              onClick={() => setExpandedFaqs(expandedFaqs.length === faqs.length ? [] : faqs.map((_, index) => index))}
               className="text-xs font-bold text-[#0304CE] hover:underline"
             >
-              {expandedFaq !== null ? 'Collapse Questions' : 'Expand All 15 Terms & FAQs'}
+              {expandedFaqs.length === faqs.length ? 'Collapse Questions' : 'Expand All 15 Terms & FAQs'}
             </button>
           </div>
 
           {/* SUBSCRIBER ACKNOWLEDGEMENT (EXACT SOURCE TRANSLATION) */}
-          <div className="bg-blue-50 border border-blue-200 p-5 rounded-xl space-y-4">
+          <div className="bg-blue-50 border border-blue-200 p-5 rounded-md space-y-4">
             <div className="text-xs font-bold text-blue-900 uppercase tracking-wider flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[#0304CE]" />
               SUBSCRIBER ACKNOWLEDGEMENT &amp; ACCEPTANCE
@@ -950,23 +954,23 @@ export default function ElevationSubscriptionForm() {
             <div className="flex items-start gap-2.5 pt-2">
               <input
                 type="checkbox"
-                id="terms-accepted-check"
+                id={`${formId}-terms-accepted-check`}
                 required
                 checked={formData.termsAccepted}
                 onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
                 className="mt-1 h-4 w-4 rounded border-blue-300 text-[#0304CE] focus:ring-[#0304CE]"
               />
-              <label htmlFor="terms-accepted-check" className="text-xs text-blue-950 font-bold cursor-pointer leading-relaxed">
+              <label htmlFor={`${formId}-terms-accepted-check`} className="text-xs text-blue-950 font-bold cursor-pointer leading-relaxed">
                 I formally confirm that the information provided, and the 15 Terms &amp; Conditions of Purchase are acceptable and consented by me. <span className="text-[#E40C05]">*</span>
               </label>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div>
-                <label className="block text-xs font-bold text-blue-900 uppercase tracking-wide mb-1">
+                <label htmlFor={`${formId}-acceptanceSignature`} className="block text-xs font-bold text-blue-900 uppercase tracking-wide mb-1">
                   Subscriber Legal Name (Signature) <span className="text-[#E40C05]">*</span>
                 </label>
-                <input
+                <input id={`${formId}-acceptanceSignature`}
                   type="text"
                   required
                   placeholder="Type your full name as signature acknowledgement"
@@ -977,10 +981,10 @@ export default function ElevationSubscriptionForm() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-blue-900 uppercase tracking-wide mb-1">
+                <label htmlFor={`${formId}-acceptanceDate`} className="block text-xs font-bold text-blue-900 uppercase tracking-wide mb-1">
                   Acknowledgement Date <span className="text-[#E40C05]">*</span>
                 </label>
-                <input
+                <input id={`${formId}-acceptanceDate`}
                   type="date"
                   required
                   value={formData.acceptanceDate}
@@ -993,7 +997,7 @@ export default function ElevationSubscriptionForm() {
         </section>
 
         {/* Developer Official Account Reference (Page 1 footer) */}
-        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 rounded-md bg-slate-50 border border-slate-200 text-xs text-slate-600 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <span className="font-bold text-slate-900 block text-sm">Official Bank Account Information</span>
             <span className="text-slate-500">All payments must be made in favour of:</span>
@@ -1001,7 +1005,7 @@ export default function ElevationSubscriptionForm() {
           </div>
           <div className="bg-white border border-slate-300 px-4 py-2.5 rounded-lg text-center shadow-xs">
             <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-semibold">Zenith Bank</span>
-            <span className="text-xl font-black font-mono text-slate-900 tracking-wider">1312097443</span>
+            <span className="text-xl font-semibold font-mono text-slate-900 tracking-wider">1312097443</span>
           </div>
         </div>
 
@@ -1010,7 +1014,7 @@ export default function ElevationSubscriptionForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full inline-flex items-center justify-center gap-2 bg-[#0304CE] hover:bg-[#143F9D] text-white font-extrabold text-base py-4 px-8 rounded-xl transition-all shadow-md hover:shadow-xl cursor-pointer disabled:opacity-70"
+            className="w-full inline-flex items-center justify-center gap-2 bg-[#0304CE] hover:bg-[#143F9D] text-white font-semibold text-base py-4 px-8 rounded-md transition-all shadow-md hover:shadow-sm cursor-pointer disabled:opacity-70"
           >
             {isSubmitting ? (
               <>

@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import FormFeedback from '@/components/ui/FormFeedback';
+import { AlertCircle, CheckCircle2, Loader2, Send } from 'lucide-react';
+import React, { useId, useState } from 'react';
 
 interface EnquiryFormProps {
   defaultProperty?: string;
@@ -9,6 +10,7 @@ interface EnquiryFormProps {
 }
 
 export default function EnquiryForm({ defaultProperty = '', className = '' }: EnquiryFormProps) {
+  const formId = useId();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -52,7 +54,7 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
       } else {
         setErrorMsg(data.error || 'Failed to submit enquiry. Please verify your details.');
       }
-    } catch (err) {
+    } catch {
       setErrorMsg('Network error. Please check your internet connection and try again.');
     } finally {
       setIsSubmitting(false);
@@ -61,7 +63,7 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
 
   if (submittedRef) {
     return (
-      <div className="bg-white p-8 rounded-2xl border border-emerald-200 shadow-sm text-center">
+      <FormFeedback kind="success" className="bg-white p-8 rounded-lg border border-emerald-200 shadow-sm text-center">
         <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 className="w-8 h-8" />
         </div>
@@ -91,25 +93,25 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
             Submit Another Enquiry
           </button>
         </div>
-      </div>
+      </FormFeedback>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
+    <form onSubmit={handleSubmit} className={`enquiry-form space-y-4 ${className}`}>
       {errorMsg && (
-        <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+        <FormFeedback className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{errorMsg}</span>
-        </div>
+        </FormFeedback>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label htmlFor={`${formId}-fullName`} className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Full Name <span className="text-[#E40C05]">*</span>
           </label>
-          <input
+          <input id={`${formId}-fullName`}
             type="text"
             required
             placeholder="e.g. Chukwuemeka Adebayo"
@@ -120,10 +122,10 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label htmlFor={`${formId}-phone`} className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Phone / WhatsApp <span className="text-[#E40C05]">*</span>
           </label>
-          <input
+          <input id={`${formId}-phone`}
             type="tel"
             required
             placeholder="e.g. +234 803 000 0000"
@@ -136,10 +138,10 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label htmlFor={`${formId}-email`} className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Email Address <span className="text-[#E40C05]">*</span>
           </label>
-          <input
+          <input id={`${formId}-email`}
             type="email"
             required
             placeholder="e.g. client@example.com"
@@ -150,10 +152,10 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label htmlFor={`${formId}-enquiryType`} className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Enquiry Type <span className="text-[#E40C05]">*</span>
           </label>
-          <select
+          <select id={`${formId}-enquiryType`}
             value={formData.enquiryType}
             onChange={(e) => setFormData({ ...formData, enquiryType: e.target.value })}
             className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#0304CE] focus:border-transparent transition-all bg-white"
@@ -168,10 +170,10 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+        <label htmlFor={`${formId}-propertyOfInterest`} className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
           Property of Interest (Optional)
         </label>
-        <input
+        <input id={`${formId}-propertyOfInterest`}
           type="text"
           placeholder="e.g. Elevation Estate, Ekrerahwe or Commercial Plots"
           value={formData.propertyOfInterest}
@@ -181,10 +183,10 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+        <label htmlFor={`${formId}-message`} className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
           Your Message / Requirements <span className="text-[#E40C05]">*</span>
         </label>
-        <textarea
+        <textarea id={`${formId}-message`}
           required
           rows={3}
           placeholder="Please describe your enquiry, preferred location, plot requirements or inspection schedule..."
@@ -197,13 +199,13 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
       <div className="flex items-start gap-2.5 pt-1">
         <input
           type="checkbox"
-          id="consent-check"
+          id={`${formId}-consent-check`}
           required
           checked={formData.consent}
           onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
           className="mt-1 h-4 w-4 rounded border-slate-300 text-[#0304CE] focus:ring-[#0304CE]"
         />
-        <label htmlFor="consent-check" className="text-xs text-slate-500 leading-relaxed cursor-pointer">
+        <label htmlFor={`${formId}-consent-check`} className="text-xs text-slate-500 leading-relaxed cursor-pointer">
           I consent to Benton Estates processing the submitted information to respond to this enquiry and provide verified property details.
         </label>
       </div>
@@ -211,7 +213,7 @@ export default function EnquiryForm({ defaultProperty = '', className = '' }: En
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full inline-flex items-center justify-center gap-2 bg-[#0304CE] hover:bg-[#143F9D] text-white font-bold text-sm py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-70 cursor-pointer"
+        className="w-full inline-flex items-center justify-center gap-2 bg-[#0304CE] hover:bg-[#143F9D] text-white font-bold text-sm py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-sm disabled:opacity-70 cursor-pointer"
       >
         {isSubmitting ? (
           <>

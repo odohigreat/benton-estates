@@ -1,54 +1,41 @@
-import React, { Suspense } from 'react';
-import { 
-  Phone, 
-  MessageCircle, 
-  MapPin, 
-  Mail, 
-  Clock, 
-  ShieldCheck, 
-  Calendar, 
-  ExternalLink 
-} from 'lucide-react';
 import EnquiryForm from '@/components/forms/EnquiryForm';
+import PageHero from '@/components/ui/PageHero';
+import {
+  Calendar,
+  Mail,
+  MapPin,
+  Megaphone,
+  MessageCircle,
+  Phone
+} from 'lucide-react';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: 'Contact Us | Benton Estates & Benton Homes & Development Limited',
   description: 'Get in touch with Benton Estates. Schedule a site inspection in Elevation Estate Ekrerahwe, consult with our property experts, or visit our Effurun corporate office.'
 };
 
-function ContactFormWrapper() {
+function ContactFormWrapper({ property }: { property?: string }) {
   return (
     <Suspense fallback={<div className="p-8 text-center text-slate-400">Loading form...</div>}>
-      <EnquiryForm />
+      <EnquiryForm defaultProperty={property} />
     </Suspense>
   );
 }
 
-export default function ContactPage() {
+export default async function ContactPage({ searchParams }: { searchParams: Promise<{ property?: string | string[] }> }) {
+  const params = await searchParams;
+  const property = typeof params.property === 'string' ? params.property : '';
   return (
     <div className="space-y-16 pb-20">
-      
+
       {/* Banner */}
-      <section className="bg-[#0A142F] text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <span className="text-xs uppercase tracking-widest font-bold text-[#E40C05] bg-red-950/60 border border-red-800 px-3 py-1 rounded-full inline-block">
-              Client Support &amp; Enquiries
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-black font-serif tracking-tight">
-              Contact Benton Estates
-            </h1>
-            <p className="text-slate-300 text-base leading-relaxed">
-              We welcome prospective homeowners, real estate investors, and corporate partners. Reach out to schedule on-site inspections or discuss real estate development advisory.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero eyebrow="Client Support & Enquiries" title="Contact Benton Estates" description={<>We welcome prospective homeowners, real estate investors, and corporate partners. Reach out to schedule on-site inspections or discuss real estate development advisory.</>} />
 
       {/* Main 2-Column Contact Layout */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="benton-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Contact Channels & Location */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-3">
@@ -65,43 +52,61 @@ export default function ContactPage() {
 
             {/* Contact Cards */}
             <div className="space-y-4">
-              
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-[#0304CE] flex items-center justify-center shrink-0 mt-0.5">
+
+              <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-md bg-blue-100 text-[#0304CE] flex items-center justify-center shrink-0 mt-0.5">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 uppercase font-bold block">Telephone Enquiries</span>
                   <a
-                    href="tel:+2348038357773"
+                    href="tel:+2348038535773"
                     className="text-base font-bold text-slate-900 hover:text-[#0304CE] transition-colors"
                   >
-                    +234 803 835 7773
+                    +234 803 853 5773
                   </a>
                   <p className="text-[11px] text-slate-500 mt-0.5">Monday to Saturday: 8:00 AM – 6:00 PM</p>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="p-5 rounded-lg bg-emerald-50/60 border border-emerald-200 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-md bg-emerald-100 text-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
                   <MessageCircle className="w-5 h-5" />
                 </div>
                 <div>
                   <span className="text-xs text-emerald-800 uppercase font-bold block">Official WhatsApp Desk</span>
                   <a
-                    href="https://wa.me/2348038357773?text=Hello%20Benton%20Estates,%20I%20would%20like%20to%20enquire%20about%20your%20properties."
+                    href="https://wa.me/2348038535773?text=Hello%20Benton%20Estates,%20I%20would%20like%20to%20enquire%20about%20your%20properties."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-base font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
                   >
-                    +234 803 835 7773
+                    +234 803 853 5773
                   </a>
                   <p className="text-[11px] text-emerald-600 mt-0.5">Fast response for site inspections &amp; documentation</p>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-red-100 text-[#E40C05] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="p-5 rounded-lg bg-emerald-50/60 border border-emerald-200 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-md bg-emerald-100 text-[#167a45] flex items-center justify-center shrink-0 mt-0.5">
+                  <Megaphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-xs text-emerald-800 uppercase font-bold block">WhatsApp Channel</span>
+                  <a
+                    href="https://whatsapp.com/channel/0029Vb91UZy2phHGIsBg0z2q"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-base font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+                  >
+                    Follow Benton Homes on WhatsApp
+                  </a>
+                  <p className="text-[11px] text-emerald-600 mt-0.5">New listings, price updates and inspection dates from Benton Homes &amp; Development Limited</p>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-md bg-red-100 text-[#E40C05] flex items-center justify-center shrink-0 mt-0.5">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -112,8 +117,8 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-md bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -131,7 +136,7 @@ export default function ContactPage() {
             </div>
 
             {/* Inspection Notice Box */}
-            <div className="p-5 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 space-y-2">
+            <div className="p-5 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-900 space-y-2">
               <span className="font-bold flex items-center gap-1.5 text-slate-900">
                 <Calendar className="w-4 h-4 text-[#0304CE]" />
                 Scheduled Site Inspections
@@ -143,7 +148,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column: Contact & Consultation Form */}
-          <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl">
+          <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-lg border border-slate-200 shadow-sm">
             <div className="mb-6">
               <span className="text-xs font-bold uppercase tracking-wider text-[#0304CE] block mb-1">
                 Direct Submission
@@ -154,7 +159,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <ContactFormWrapper />
+            <ContactFormWrapper property={property} />
           </div>
 
         </div>

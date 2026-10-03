@@ -1,8 +1,9 @@
-import type { Metadata, Viewport } from 'next';
-import { Plus_Jakarta_Sans, Outfit } from 'next/font/google';
-import './globals.css';
-import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Navbar from '@/components/layout/Navbar';
+import MotionProvider from '@/components/motion/MotionProvider';
+import type { Metadata, Viewport } from 'next';
+import { Outfit, Plus_Jakarta_Sans } from 'next/font/google';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Benton Estates | Your Trusted Partner in Quality Real Estate',
@@ -26,9 +27,9 @@ export const metadata: Metadata = {
     siteName: 'Benton Estates',
     images: [
       {
-        url: '/images/hero.jpg',
-        width: 1200,
-        height: 630,
+        url: '/images/hero-estate.jpg',
+        width: 1672,
+        height: 941,
         alt: 'Benton Estates Developments'
       }
     ],
@@ -50,14 +51,14 @@ export const viewport: Viewport = {
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-jakarta',
   display: 'swap',
   weight: ['400', '500', '600', '700', '800'],
 });
 
 const outfit = Outfit({
   subsets: ['latin'],
-  variable: '--font-heading',
+  variable: '--font-outfit',
   display: 'swap',
   weight: ['500', '600', '700', '800', '900'],
 });
@@ -70,11 +71,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${plusJakarta.variable} ${outfit.variable} h-full scroll-smooth`}>
       <body className="min-h-full flex flex-col antialiased bg-white text-slate-800">
-        <Navbar />
-        <main className="flex-1 pt-24 sm:pt-28">
-          {children}
-        </main>
-        <Footer />
+        <a href="#main-content" className="skip-link">Skip to main content</a>
+        <MotionProvider>
+          <Navbar />
+          <main id="main-content" tabIndex={-1} className="site-main flex-1">
+            {children}
+          </main>
+          <Footer />
+        </MotionProvider>
       </body>
     </html>
   );

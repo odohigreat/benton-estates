@@ -1,22 +1,39 @@
-import React from 'react';
+import { ArrowRight, ExternalLink, Lock, Mail, MapPin, Megaphone, MessageCircle, Phone, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Phone, MessageCircle, MapPin, Mail, ArrowRight, ShieldCheck, ExternalLink, Lock } from 'lucide-react';
 import BentonLogo from '../ui/BentonLogo';
+
+// Entries without a URL are hidden.
+const socials: { label: string; href: string | null; path: string }[] = [
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/people/Benton-Homes-Ltd/100072145611295/',
+    path: 'M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.5V4.4c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.3H8v3h2.5V21h3z',
+  },
+  {
+    label: 'Instagram',
+    href: 'https://www.instagram.com/bentonhomesltd/',
+    path: 'M12 7.3a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.9-8.9a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 4.6c2.4 0 2.7 0 3.6.1 2.4.1 3.6 1.3 3.7 3.7.1.9.1 1.2.1 3.6s0 2.7-.1 3.6c-.1 2.4-1.3 3.6-3.7 3.7-.9.1-1.2.1-3.6.1s-2.7 0-3.6-.1c-2.4-.1-3.6-1.3-3.7-3.7-.1-.9-.1-1.2-.1-3.6s0-2.7.1-3.6c.1-2.4 1.3-3.6 3.7-3.7.9-.1 1.2-.1 3.6-.1zM12 3c-2.4 0-2.7 0-3.7.1C5 3.2 3.2 5 3.1 8.3 3 9.3 3 9.6 3 12s0 2.7.1 3.7c.1 3.3 1.9 5.1 5.2 5.2 1 .1 1.3.1 3.7.1s2.7 0 3.7-.1c3.3-.1 5.1-1.9 5.2-5.2.1-1 .1-1.3.1-3.7s0-2.7-.1-3.7C20.8 5 19 3.2 15.7 3.1 14.7 3 14.4 3 12 3z',
+  },
+  {
+    label: 'TikTok',
+    href: 'https://www.tiktok.com/@benton.homes',
+    path: 'M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.7 5.7 0 1 0 4.9 5.7V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z',
+  },
+];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0A142F] text-slate-300 pt-16 pb-8 border-t-4 border-[#0304CE]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="site-footer">
+      <div className="benton-container">
         {/* Main 4-Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
-          
+
           {/* Col 1: Brand & Profile */}
           <div className="space-y-4">
             <BentonLogo variant="white" size="lg" showSubtitle />
-            
+
             <p className="text-sm text-slate-400 leading-relaxed">
               Benton Estates is a premier property development and consulting firm delivering transparent, litigation-free real estate opportunities across Delta State and beyond.
             </p>
@@ -36,6 +53,19 @@ export default function Footer() {
               </span>
               <span>Honesty • Ownership • Service • Execution</span>
             </div>
+
+            <div className="pt-2">
+              <div className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Follow Benton Homes</div>
+              <ul className="flex items-center gap-2">
+                {socials.filter(social => social.href).map(({ label, href, path }) => (
+                  <li key={label}>
+                    <a href={href!} target="_blank" rel="noopener noreferrer" aria-label={`Benton Homes on ${label}`} className="w-10 h-10 grid place-items-center rounded-md border border-slate-700 text-slate-300 hover:text-white hover:border-white transition-colors">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d={path} /></svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Col 2: Quick Links */}
@@ -51,21 +81,33 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-white transition-colors flex items-center gap-1.5">
+                <Link href="/properties" className="hover:text-white transition-colors flex items-center gap-1.5">
                   <ArrowRight className="w-3.5 h-3.5 text-[#0304CE]" />
-                  About Us &amp; Mission
+                  Properties for Sale &amp; Rent
                 </Link>
               </li>
               <li>
-                <Link href="/properties" className="hover:text-white transition-colors flex items-center gap-1.5">
+                <Link href="/locations" className="hover:text-white transition-colors flex items-center gap-1.5">
                   <ArrowRight className="w-3.5 h-3.5 text-[#0304CE]" />
-                  Featured Properties
+                  Browse by Location
                 </Link>
               </li>
               <li>
                 <Link href="/services" className="hover:text-white transition-colors flex items-center gap-1.5">
                   <ArrowRight className="w-3.5 h-3.5 text-[#0304CE]" />
                   Our Core Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/agents" className="hover:text-white transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-[#0304CE]" />
+                  Meet Our Agents
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-white transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-[#0304CE]" />
+                  About Us &amp; Mission
                 </Link>
               </li>
               <li>
@@ -121,7 +163,7 @@ export default function Footer() {
               </li>
             </ul>
 
-            <div className="p-3 rounded-lg bg-blue-950/60 border border-blue-900/60 text-xs">
+            <div className="p-3 rounded-lg bg-white/5 border border-white/10 text-xs">
               <span className="text-white font-semibold flex items-center gap-1.5 mb-1">
                 <ShieldCheck className="w-4 h-4 text-[#E40C05]" />
                 Official Developer Account Notice
@@ -147,20 +189,32 @@ export default function Footer() {
 
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#0304CE] shrink-0" />
-                <a href="tel:+2348038357773" className="hover:text-white text-xs">
-                  +234 803 835 7773
+                <a href="tel:+2348038535773" className="hover:text-white text-xs">
+                  +234 803 853 5773
                 </a>
               </div>
 
               <div className="flex items-center gap-3">
                 <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
                 <a
-                  href="https://wa.me/2348038357773?text=Hello%20Benton%20Estates"
+                  href="https://wa.me/2348038535773?text=Hello%20Benton%20Estates"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white text-xs text-[#25D366] font-medium"
                 >
                   WhatsApp Consultation
+                </a>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Megaphone className="w-4 h-4 text-[#25D366] shrink-0" />
+                <a
+                  href="https://whatsapp.com/channel/0029Vb91UZy2phHGIsBg0z2q"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white text-xs text-[#25D366] font-medium"
+                >
+                  Follow our WhatsApp Channel
                 </a>
               </div>
 

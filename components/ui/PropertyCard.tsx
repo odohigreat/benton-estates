@@ -1,165 +1,29 @@
-import React from 'react';
-import Link from 'next/link';
+import { ArrowUpRight, Check, FileText, MapPin } from 'lucide-react';
 import Image from 'next/image';
-import { MapPin, ArrowRight, Shield, CheckCircle2, FileText } from 'lucide-react';
-
+import Link from 'next/link';
+import { AgentAvatar } from '../listings/AgentCard';
+import StatusBadge from './StatusBadge';
 export interface PropertyItem {
-  id: string;
-  slug: string;
-  name: string;
-  tagline: string;
-  location: string;
-  state: string;
-  category: string;
-  price: number;
-  price_formatted: string;
-  price_note?: string;
-  plot_size: string;
-  title_type: string;
-  is_featured: number | boolean;
-  status: string;
-  description: string;
-  highlights: string; // JSON
-  features: string; // JSON
-  image: string;
+  id: string; slug: string; name: string; tagline: string; location: string; state: string;
+  category: string; price: number; price_formatted: string; price_note?: string; plot_size: string;
+  title_type: string; is_featured: number | boolean; status: string; description: string;
+  highlights: string; features: string; image: string; gallery?: string;
+  listing_type?: 'sale' | 'rent'; video_url?: string | null; agent_id?: string | null;
+  floor_plans?: string | null; image_caption?: string | null;
+  agent_name?: string | null; agent_position?: string | null; agent_photo?: string | null;
 }
-
-export default function PropertyCard({ property }: { property: PropertyItem }) {
-  const highlights: string[] = (() => {
-    try {
-      return JSON.parse(property.highlights);
-    } catch {
-      return [];
-    }
-  })();
-
+export default function PropertyCard({ property, eager = false }: { property: PropertyItem; eager?: boolean }) {
+  let highlights: string[] = [];
+  try { const parsed: unknown = JSON.parse(property.highlights); if (Array.isArray(parsed)) highlights = parsed.filter((item): item is string => typeof item === 'string'); } catch { /* Missing optional highlights do not block the listing. */ }
   const isElevation = property.slug === 'elevation-estate';
-
-  return (
-    <div className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group property-card-hover">
-      {/* Image Container */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
-        <Image
-          src={property.image}
-          alt={property.name}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-
-        {/* Category & Status Badges */}
-        <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2">
-          <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0304CE] text-white shadow-md">
-            {property.category}
-          </span>
-          {property.status === 'SELLING FAST' && (
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#E40C05] text-white shadow-md animate-pulse">
-              Selling Fast
-            </span>
-          )}
-          {property.status === 'COMING SOON' && (
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500 text-white shadow-md">
-              Coming Soon
-            </span>
-          )}
-        </div>
-
-        {/* Plot Size Badge */}
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-xs font-bold text-slate-800 shadow-sm flex items-center gap-1">
-          <span>{property.plot_size}</span>
-        </div>
-      </div>
-
-      {/* Content Container */}
-      <div className="p-6 flex-1 flex flex-col justify-between">
-        <div>
-          {/* Location */}
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-2">
-            <MapPin className="w-3.5 h-3.5 text-[#E40C05]" />
-            <span>{property.location}, {property.state}</span>
-          </div>
-
-          {/* Name */}
-          <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#0304CE] transition-colors line-clamp-1 mb-2">
-            <Link href={`/properties/${property.slug}`}>
-              {property.name}
-            </Link>
-          </h3>
-
-          <p className="text-sm text-slate-700 font-medium line-clamp-2 mb-4 leading-relaxed">
-            {property.tagline}
-          </p>
-
-          {/* Title Type Indicator */}
-          <div className="p-2.5 rounded-lg bg-blue-50/60 border border-blue-100 flex items-start gap-2 mb-4">
-            <FileText className="w-4 h-4 text-[#0304CE] shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-800 font-medium">
-              <span className="font-bold text-slate-900 block">Title Document:</span>
-              <span>{property.title_type}</span>
-            </div>
-          </div>
-
-          {/* Key Highlights */}
-          {highlights.length > 0 && (
-            <div className="space-y-1.5 mb-5">
-              {highlights.slice(0, 2).map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0304CE] shrink-0" />
-                  <span className="truncate">{item}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Footer with Price & Actions */}
-        <div className="pt-4 border-t border-slate-100 mt-auto">
-          <div className="flex items-baseline justify-between mb-4">
-            <div>
-              <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
-                Investment Rate
-              </span>
-              <span className="text-xl font-black text-[#0304CE]">
-                {property.price_formatted}
-              </span>
-            </div>
-
-            {isElevation && (
-              <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                0-12 Mos Plans
-              </span>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            <Link
-              href={`/properties/${property.slug}`}
-              className="w-full inline-flex items-center justify-center gap-1 text-xs font-bold py-2.5 px-3 rounded-lg border border-slate-300 text-slate-700 hover:border-[#0304CE] hover:text-[#0304CE] transition-all"
-            >
-              View Details
-            </Link>
-
-            {isElevation ? (
-              <Link
-                href="/properties/elevation-estate/subscribe"
-                className="w-full inline-flex items-center justify-center gap-1 text-xs font-bold py-2.5 px-3 rounded-lg bg-[#E40C05] text-white hover:bg-red-700 transition-all shadow-xs"
-              >
-                Subscribe
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            ) : (
-              <Link
-                href={`/contact?property=${encodeURIComponent(property.name)}`}
-                className="w-full inline-flex items-center justify-center gap-1 text-xs font-bold py-2.5 px-3 rounded-lg bg-[#0304CE] text-white hover:bg-[#143F9D] transition-all shadow-xs"
-              >
-                Enquire
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
+  return <article className="property-card">
+    <div className="property-image"><Image src={property.image} alt={property.name} fill loading={eager ? "eager" : "lazy"} sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw" className="object-cover" /><div className="property-image-badge"><StatusBadge status={property.status} /></div><span className="property-image-type">{property.listing_type === 'rent' ? 'For Rent' : 'For Sale'}</span><span className="property-image-size">{property.plot_size}</span></div>
+    <div className="property-content"><div className="property-location"><MapPin size={13} className="shrink-0 mt-0.5" />{property.location}, {property.state}</div><span className="eyebrow mb-2">{property.category}</span><h3><Link href={`/properties/${property.slug}`}>{property.name}</Link></h3><p className="property-tagline">{property.tagline}</p>
+      <div className="property-documentation"><FileText size={17} /><div><span>Title documentation</span>{property.title_type}</div></div>
+      <ul className="property-highlights">{highlights.slice(0, 2).map(item => <li key={item}><Check size={13} />{item}</li>)}</ul>
+      {property.agent_name && <div className="property-agent"><AgentAvatar name={property.agent_name} photo={property.agent_photo ?? null} size={32} /><div><span>Listed by</span>{property.agent_name}</div></div>}
+      <div className="property-price"><div><small>Investment Rate</small><strong>{property.price_formatted}</strong></div>{isElevation && <span className="text-[10px] text-slate-600">0–12 Mos Plans</span>}</div>
+      <div className="property-actions"><Link className="button-secondary" href={`/properties/${property.slug}`} aria-label={`View ${property.name}`}>View Details</Link><Link className="button-primary" href={isElevation ? '/properties/elevation-estate/subscribe' : `/contact?property=${encodeURIComponent(property.name)}`}>{isElevation ? 'Subscribe' : 'Enquire'}<ArrowUpRight size={14} /></Link></div>
     </div>
-  );
+  </article>;
 }

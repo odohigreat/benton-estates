@@ -1,27 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { 
-  Lock, 
-  ShieldCheck, 
-  Users, 
-  MessageSquare, 
-  FileText, 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
-  LogOut, 
-  Eye, 
-  Building,
+import BentonLogo from '@/components/ui/BentonLogo';
+import StatusBadge from '@/components/ui/StatusBadge';
+import EmptyState from '@/components/ui/EmptyState';
+import {
+  CheckCircle2,
+  ChevronRight,
+  Lock,
+  LogOut,
+  MessageSquare,
   RefreshCw,
   Search,
-  ExternalLink,
-  ChevronRight
+  ShieldCheck,
+  Users
 } from 'lucide-react';
-import BentonLogo from '@/components/ui/BentonLogo';
+import React, { useEffect, useRef, useState } from 'react';
+
+type AdminRecord = { id: string; status: string;[key: string]: string | number | null };
 
 export default function AdminDashboardPage() {
+  const detailRef = useRef<HTMLDivElement>(null);
+  const [dataError, setDataError] = useState<string | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
@@ -29,10 +28,10 @@ export default function AdminDashboardPage() {
 
   const [activeTab, setActiveTab] = useState<'enquiries' | 'realtors' | 'subscriptions'>('enquiries');
   const [data, setData] = useState<{
-    enquiries: any[];
-    realtors: any[];
-    subscriptions: any[];
-    properties: any[];
+    enquiries: AdminRecord[];
+    realtors: AdminRecord[];
+    subscriptions: AdminRecord[];
+    properties: AdminRecord[];
   }>({
     enquiries: [],
     realtors: [],
@@ -42,20 +41,30 @@ export default function AdminDashboardPage() {
 
   const [selectedItem, setSelectedItem] = useState<{
     type: 'enquiry' | 'realtor' | 'subscription';
-    item: any;
+    item: AdminRecord;
   } | null>(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
-  // Check existing token
   useEffect(() => {
-    const saved = localStorage.getItem('benton_admin_token');
+    const controller = new AbortController();
+    let saved: string | null = null;
+    try { saved = localStorage.getItem('benton_admin_token'); } catch { return; }
     if (saved) {
-      setAuthToken(saved);
-      fetchData(saved);
+      fetch('/api/admin/data', { headers: { Authorization: `Bearer ${saved}` }, signal: controller.signal })
+        .then(async response => { if (!response.ok) throw new Error('Your session could not be restored. Please sign in again.'); return response.json(); })
+        .then(result => { if (result.success) { setData(result.data); setAuthToken(saved); } })
+        .catch(error => { if (error.name !== 'AbortError') setAuthError(error.message); });
     }
+    return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+    const frame = requestAnimationFrame(() => { detailRef.current?.focus({ preventScroll: true }); if (window.innerWidth < 1024) detailRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); });
+    return () => cancelAnimationFrame(frame);
+  }, [selectedItem]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +86,7 @@ export default function AdminDashboardPage() {
       } else {
         setAuthError(resData.error || 'Invalid passcode');
       }
-    } catch (err) {
+    } catch {
       setAuthError('Connection error. Please try again.');
     } finally {
       setIsLoading(false);
@@ -86,11 +95,15 @@ export default function AdminDashboardPage() {
 
   const handleLogout = () => {
     setAuthToken(null);
+    setSelectedItem(null);
+    setData({ enquiries: [], realtors: [], subscriptions: [], properties: [] });
+    setPasscode('');
     localStorage.removeItem('benton_admin_token');
   };
 
   const fetchData = async (token: string) => {
     setIsLoading(true);
+    setDataError(null);
     try {
       const res = await fetch('/api/admin/data', {
         headers: { Authorization: `Bearer ${token}` }
@@ -98,8 +111,9 @@ export default function AdminDashboardPage() {
       const resData = await res.json();
       if (res.ok && resData.success) {
         setData(resData.data);
-      }
+      } else { setDataError(resData.error || 'Unable to load records. Please refresh and try again.'); }
     } catch (err) {
+      setDataError('Unable to load records. Check your connection and refresh.');
       console.error('Error fetching admin data:', err);
     } finally {
       setIsLoading(false);
@@ -123,6 +137,8 @@ export default function AdminDashboardPage() {
           adminNotes
         })
       });
+      if (!res.ok) { setDataError('The update could not be saved. Please try again.'); return; }
+      setDataError(null);
       if (res.ok) {
         setActionSuccess(`Realtor status updated to ${status}`);
         fetchData(authToken);
@@ -135,6 +151,7 @@ export default function AdminDashboardPage() {
         setTimeout(() => setActionSuccess(null), 4000);
       }
     } catch (err) {
+      setDataError('The update could not be saved. Check your connection.');
       console.error('Error updating realtor:', err);
     }
   };
@@ -154,12 +171,16 @@ export default function AdminDashboardPage() {
           status
         })
       });
+      if (!res.ok) { setDataError('The update could not be saved. Please try again.'); return; }
+      setDataError(null);
       if (res.ok) {
         setActionSuccess(`Enquiry status updated to ${status}`);
         fetchData(authToken);
+        setSelectedItem(current => current?.item.id === id ? { ...current, item: { ...current.item, status } } : current);
         setTimeout(() => setActionSuccess(null), 4000);
       }
     } catch (err) {
+      setDataError('The update could not be saved. Check your connection.');
       console.error('Error updating enquiry:', err);
     }
   };
@@ -179,25 +200,36 @@ export default function AdminDashboardPage() {
           status
         })
       });
+      if (!res.ok) { setDataError('The update could not be saved. Please try again.'); return; }
+      setDataError(null);
       if (res.ok) {
         setActionSuccess(`Subscription status updated to ${status}`);
         fetchData(authToken);
+        setSelectedItem(current => current?.item.id === id ? { ...current, item: { ...current.item, status } } : current);
         setTimeout(() => setActionSuccess(null), 4000);
       }
     } catch (err) {
+      setDataError('The update could not be saved. Check your connection.');
       console.error('Error updating subscription:', err);
     }
+  };
+
+  const matchesSearch = (item: AdminRecord) => Object.values(item).some(value => String(value ?? '').toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredData = {
+    enquiries: data.enquiries.filter(matchesSearch),
+    realtors: data.realtors.filter(matchesSearch),
+    subscriptions: data.subscriptions.filter(matchesSearch),
   };
 
   // Login Screen if not authenticated
   if (!authToken) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full text-center space-y-6">
+        <div className="bg-white p-8 sm:p-10 rounded-lg border border-slate-200 shadow-sm max-w-md w-full text-center space-y-6">
           <BentonLogo size="md" showSubtitle className="justify-center" />
-          
+
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-slate-900 font-serif">Staff Administrative Portal</h2>
+            <h1 className="text-2xl font-semibold text-slate-900 font-serif">Staff Administrative Portal</h1>
             <p className="text-xs text-slate-500">
               Authorized Benton Homes personnel only.
             </p>
@@ -205,23 +237,25 @@ export default function AdminDashboardPage() {
 
           <form onSubmit={handleLogin} className="space-y-4 text-left">
             {authError && (
-              <div className="p-3 rounded-lg bg-red-50 text-red-700 text-xs border border-red-200">
+              <div role="alert" className="p-3 rounded-lg bg-red-50 text-red-700 text-xs border border-red-200">
                 {authError}
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-700 mb-1">
+              <label htmlFor="admin-passcode" className="block text-xs font-bold uppercase text-slate-700 mb-1">
                 Admin Passcode
               </label>
               <div className="relative">
                 <input
+                  id="admin-passcode"
+                  autoComplete="current-password"
                   type="password"
                   required
                   placeholder="Enter admin passcode"
                   value={passcode}
                   onChange={(e) => setPasscode(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
+                  className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
                 />
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               </div>
@@ -233,7 +267,7 @@ export default function AdminDashboardPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-[#0304CE] hover:bg-[#143F9D] text-white font-bold rounded-xl text-sm transition-all shadow-md cursor-pointer disabled:opacity-60"
+              className="w-full py-3 bg-[#0304CE] hover:bg-[#143F9D] text-white font-bold rounded-md text-sm transition-all shadow-md cursor-pointer disabled:opacity-60"
             >
               {isLoading ? 'Verifying Access...' : 'Unlock Administrative Console'}
             </button>
@@ -245,15 +279,15 @@ export default function AdminDashboardPage() {
 
   // Authenticated Portal
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
+    <div className="admin-shell benton-container py-8 space-y-8">
+
       {/* Top Bar */}
-      <div className="bg-[#0A142F] text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
-        <div className="flex items-center gap-4">
-          <BentonLogo variant="white" size="sm" />
+      <div className="admin-toolbar bg-white border border-slate-200 text-slate-900 p-6 rounded-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="admin-title-group flex items-center gap-4">
+          <BentonLogo size="sm" />
           <div>
             <h1 className="text-lg font-bold">Benton Administrative Management Console</h1>
-            <span className="text-xs text-blue-300">
+            <span className="text-xs text-slate-600">
               Persistent Records: Contact Enquiries, Realtor Submissions &amp; Elevation Estate Applications
             </span>
           </div>
@@ -262,14 +296,14 @@ export default function AdminDashboardPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => authToken && fetchData(authToken)}
-            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-xs px-3 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-xs px-3 py-2 rounded-lg transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 bg-red-900/40 hover:bg-red-900/60 text-red-200 text-xs px-3 py-2 rounded-lg transition-colors border border-red-800"
+            className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs px-3 py-2 rounded-lg transition-colors border border-red-200"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign Out
@@ -278,45 +312,48 @@ export default function AdminDashboardPage() {
       </div>
 
       {actionSuccess && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200 flex items-center gap-2">
+        <div role="status" className="p-3.5 rounded-md bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
+      {dataError && <div role="alert" className="admin-notice bg-red-50 text-red-800">{dataError}<button className="ml-3 underline" onClick={() => authToken && fetchData(authToken)}>Retry loading</button></div>}
+      {isLoading && <div role="status" className="admin-notice flex items-center gap-3"><RefreshCw className="w-4 h-4 animate-spin" />Loading records…</div>}
+      <div><label htmlFor="admin-search" className="eyebrow block mb-2">Search records</label><div className="relative"><Search className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" /><input id="admin-search" type="search" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} placeholder="Search name, reference, phone or email" className="w-full min-h-12 pl-10 pr-4 bg-white border border-slate-300 rounded-md text-sm" /></div></div>
       {/* Navigation Tabs */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 pb-4">
+      <div className="admin-tabs" aria-label="Record categories">
         <button
+          aria-pressed={activeTab === 'enquiries'}
           onClick={() => { setActiveTab('enquiries'); setSelectedItem(null); }}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'enquiries'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === 'enquiries'
               ? 'bg-[#0304CE] text-white shadow-sm'
               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-          }`}
+            }`}
         >
           <MessageSquare className="w-4 h-4" />
           Contact Enquiries ({data.enquiries.length})
         </button>
 
         <button
+          aria-pressed={activeTab === 'realtors'}
           onClick={() => { setActiveTab('realtors'); setSelectedItem(null); }}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'realtors'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === 'realtors'
               ? 'bg-[#0304CE] text-white shadow-sm'
               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-          }`}
+            }`}
         >
           <Users className="w-4 h-4" />
           Realtor Applications ({data.realtors.length})
         </button>
 
         <button
+          aria-pressed={activeTab === 'subscriptions'}
           onClick={() => { setActiveTab('subscriptions'); setSelectedItem(null); }}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'subscriptions'
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === 'subscriptions'
               ? 'bg-[#0304CE] text-white shadow-sm'
               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-          }`}
+            }`}
         >
           <ShieldCheck className="w-4 h-4" />
           Elevation Subscriptions ({data.subscriptions.length})
@@ -325,29 +362,28 @@ export default function AdminDashboardPage() {
 
       {/* Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         {/* Left Table / List Column */}
         <div className={`${selectedItem ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-4`}>
-          
+
           {/* TAB 1: CONTACT ENQUIRIES */}
           {activeTab === 'enquiries' && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
                 <span className="font-bold text-xs uppercase text-slate-700">General Enquiries Received</span>
                 <span className="text-xs text-slate-500">{data.enquiries.length} total entries</span>
               </div>
 
-              {data.enquiries.length === 0 ? (
-                <div className="p-12 text-center text-slate-400 text-sm">
-                  No contact enquiries submitted yet.
-                </div>
+              {filteredData.enquiries.length === 0 ? (
+                <EmptyState title={isLoading ? 'Loading records…' : dataError ? 'Records unavailable' : searchTerm ? 'No matching records' : 'No submissions yet'} description={isLoading ? 'Please wait while records are retrieved.' : dataError ? 'Use Retry loading above to reconnect.' : searchTerm ? 'Try a different name, reference or contact detail.' : 'New submissions will appear here for your team to review.'} />
               ) : (
                 <div className="divide-y divide-slate-100">
-                  {data.enquiries.map((enq) => (
-                    <div
+                  {filteredData.enquiries.map((enq) => (
+                    <button type="button"
                       key={enq.id}
+                      aria-pressed={selectedItem?.item.id === enq.id}
                       onClick={() => setSelectedItem({ type: 'enquiry', item: enq })}
-                      className="p-4 hover:bg-blue-50/40 cursor-pointer transition-colors flex items-center justify-between gap-4"
+                      className="admin-record p-4 hover:bg-blue-50/40 cursor-pointer transition-colors flex items-center justify-between gap-4"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -364,16 +400,10 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          enq.status === 'RESOLVED'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {enq.status}
-                        </span>
+                        <StatusBadge status={enq.status} />
                         <ChevronRight className="w-4 h-4 text-slate-400" />
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -382,23 +412,22 @@ export default function AdminDashboardPage() {
 
           {/* TAB 2: REALTOR APPLICATIONS */}
           {activeTab === 'realtors' && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
                 <span className="font-bold text-xs uppercase text-slate-700">Official Realtor Applications</span>
                 <span className="text-xs text-slate-500">{data.realtors.length} applications</span>
               </div>
 
-              {data.realtors.length === 0 ? (
-                <div className="p-12 text-center text-slate-400 text-sm">
-                  No realtor applications registered yet.
-                </div>
+              {filteredData.realtors.length === 0 ? (
+                <EmptyState title={isLoading ? 'Loading records…' : dataError ? 'Records unavailable' : searchTerm ? 'No matching records' : 'No submissions yet'} description={isLoading ? 'Please wait while records are retrieved.' : dataError ? 'Use Retry loading above to reconnect.' : searchTerm ? 'Try a different name, reference or contact detail.' : 'New submissions will appear here for your team to review.'} />
               ) : (
                 <div className="divide-y divide-slate-100">
-                  {data.realtors.map((r) => (
-                    <div
+                  {filteredData.realtors.map((r) => (
+                    <button type="button"
                       key={r.id}
+                      aria-pressed={selectedItem?.item.id === r.id}
                       onClick={() => setSelectedItem({ type: 'realtor', item: r })}
-                      className="p-4 hover:bg-blue-50/40 cursor-pointer transition-colors flex items-center justify-between gap-4"
+                      className="admin-record p-4 hover:bg-blue-50/40 cursor-pointer transition-colors flex items-center justify-between gap-4"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -417,18 +446,10 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          r.status === 'Approved'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : r.status === 'Declined'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {r.status}
-                        </span>
+                        <StatusBadge status={r.status} />
                         <ChevronRight className="w-4 h-4 text-slate-400" />
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -437,23 +458,22 @@ export default function AdminDashboardPage() {
 
           {/* TAB 3: ELEVATION SUBSCRIPTIONS */}
           {activeTab === 'subscriptions' && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
                 <span className="font-bold text-xs uppercase text-slate-700">Elevation Estate Land Subscriptions</span>
                 <span className="text-xs text-slate-500">{data.subscriptions.length} applications</span>
               </div>
 
-              {data.subscriptions.length === 0 ? (
-                <div className="p-12 text-center text-slate-400 text-sm">
-                  No estate subscriptions received yet.
-                </div>
+              {filteredData.subscriptions.length === 0 ? (
+                <EmptyState title={isLoading ? 'Loading records…' : dataError ? 'Records unavailable' : searchTerm ? 'No matching records' : 'No submissions yet'} description={isLoading ? 'Please wait while records are retrieved.' : dataError ? 'Use Retry loading above to reconnect.' : searchTerm ? 'Try a different name, reference or contact detail.' : 'New submissions will appear here for your team to review.'} />
               ) : (
                 <div className="divide-y divide-slate-100">
-                  {data.subscriptions.map((sub) => (
-                    <div
+                  {filteredData.subscriptions.map((sub) => (
+                    <button type="button"
                       key={sub.id}
+                      aria-pressed={selectedItem?.item.id === sub.id}
                       onClick={() => setSelectedItem({ type: 'subscription', item: sub })}
-                      className="p-4 hover:bg-blue-50/40 cursor-pointer transition-colors flex items-center justify-between gap-4"
+                      className="admin-record p-4 hover:bg-blue-50/40 cursor-pointer transition-colors flex items-center justify-between gap-4"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -472,16 +492,10 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          sub.status === 'Verified'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {sub.status}
-                        </span>
+                        <StatusBadge status={sub.status} />
                         <ChevronRight className="w-4 h-4 text-slate-400" />
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -492,7 +506,7 @@ export default function AdminDashboardPage() {
 
         {/* Right Detail Inspection Column */}
         {selectedItem && (
-          <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-xl p-6 space-y-6 sticky top-28">
+          <div ref={detailRef} tabIndex={-1} role="region" aria-label="Selected record details" className="admin-detail lg:col-span-5 bg-white rounded-lg border border-slate-200 shadow-sm p-6 space-y-6 lg:sticky lg:top-28">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <span className="text-xs uppercase font-bold text-slate-400 block">Record Details</span>
@@ -569,7 +583,7 @@ export default function AdminDashboardPage() {
             {/* REALTOR DETAILS */}
             {selectedItem.type === 'realtor' && (
               <div className="space-y-4 text-xs max-h-[70vh] overflow-y-auto pr-1">
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-1">
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-1">
                   <span className="text-[10px] uppercase font-bold text-[#0304CE] block">Section 8: Office Status</span>
                   <div className="flex items-center justify-between">
                     <span>Status: <strong className="text-slate-900">{selectedItem.item.status}</strong></span>
@@ -633,7 +647,7 @@ export default function AdminDashboardPage() {
             {/* SUBSCRIPTION DETAILS */}
             {selectedItem.type === 'subscription' && (
               <div className="space-y-4 text-xs max-h-[70vh] overflow-y-auto pr-1">
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md space-y-1">
                   <span className="text-[10px] uppercase font-bold text-[#E40C05] block">Subscription Processing</span>
                   <div className="flex items-center justify-between">
                     <span>Status: <strong className="text-slate-900">{selectedItem.item.status}</strong></span>
