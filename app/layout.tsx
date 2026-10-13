@@ -2,7 +2,7 @@ import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import MotionProvider from '@/components/motion/MotionProvider';
 import type { Metadata, Viewport } from 'next';
-import { Outfit, Plus_Jakarta_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -49,18 +49,19 @@ export const viewport: Viewport = {
   themeColor: '#0304CE'
 };
 
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
+// Self-hosted variable fonts so builds never depend on fetching Google Fonts.
+const plusJakarta = localFont({
+  src: './fonts/PlusJakartaSans-Variable.woff2',
   variable: '--font-jakarta',
   display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: '400 800',
 });
 
-const outfit = Outfit({
-  subsets: ['latin'],
+const outfit = localFont({
+  src: './fonts/Outfit-Variable.woff2',
   variable: '--font-outfit',
   display: 'swap',
-  weight: ['500', '600', '700', '800', '900'],
+  weight: '500 900',
 });
 
 export default function RootLayout({
