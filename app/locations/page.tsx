@@ -6,15 +6,16 @@ import { locationLabel } from '@/lib/listings';
 import { ArrowUpRight, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { connection } from 'next/server';
 
 export const metadata = {
   title: 'Locations | Benton Estates',
   description: 'Browse Benton Estates land and property listings by state and city.'
 };
 
+// Listings are refreshed from Supabase every 5 minutes (see lib/db.ts).
+export const revalidate = 300;
+
 export default async function LocationsPage() {
-  await connection();
   const locations = await dbRepo.listLocations();
   return (
     <div className="space-y-16 pb-24">

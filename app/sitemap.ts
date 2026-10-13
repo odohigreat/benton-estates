@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { dbRepo } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 const baseUrl = 'https://bentonhomes.com';
 

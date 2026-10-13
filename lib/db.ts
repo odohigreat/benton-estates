@@ -13,6 +13,10 @@ export interface PropertySearch {
 
 type Row = Record<string, unknown>;
 
+// Public listing data is edited directly in Supabase, so pages may serve it up to 5 minutes stale.
+const PUBLIC_TABLES = new Set(['properties', 'agents']);
+const PUBLIC_REVALIDATE_SECONDS = 300;
+
 // All database access stays on the server; browser clients have no table grants.
 async function request<T>(table: string, params: Record<string, string> = {}, method = 'GET', body?: Row): Promise<T> {
   const base = process.env.SUPABASE_URL;
@@ -22,7 +26,7 @@ async function request<T>(table: string, params: Record<string, string> = {}, me
   url.search = new URLSearchParams(params).toString();
   const headers: Record<string, string> = { apikey: key, 'Content-Type': 'application/json', Prefer: 'return=representation' };
   if (!key.startsWith('sb_secret_')) headers.Authorization = `Bearer ${key}`;
-  const response = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, cache: 'no-store', signal: AbortSignal.timeout(15000) });
+  const response = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, ...(method === 'GET' && PUBLIC_TABLES.has(table) ? { next: { revalidate: PUBLIC_REVALIDATE_SECONDS } } : { cache: 'no-store' as const }), signal: AbortSignal.timeout(15000) });
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(`Supabase ${table} request failed (${response.status}): ${error.code || 'unknown'}`);

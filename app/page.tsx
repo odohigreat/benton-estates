@@ -1,6 +1,7 @@
 import EnquiryForm from '@/components/forms/EnquiryForm';
 import HomeHero from '@/components/home/HomeHero';
 import ListingBanner from '@/components/home/ListingBanner';
+import WhyBuySection from '@/components/home/WhyBuySection';
 import PropertySearchBar from '@/components/listings/PropertySearchBar';
 import Reveal from '@/components/motion/Reveal';
 import PropertyCard, { PropertyItem } from '@/components/ui/PropertyCard';
@@ -21,10 +22,11 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { connection } from 'next/server';
+
+// Listings are refreshed from Supabase every 5 minutes (see lib/db.ts).
+export const revalidate = 300;
 
 export default async function HomePage() {
-  await connection();
   const properties = await dbRepo.listProperties() as unknown as PropertyItem[];
   const locations = (await dbRepo.listLocations()).map(l => l.state);
   // Temporary promotion; remove this and the banner below when the campaign ends.
@@ -131,6 +133,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* WHY BUY FROM BENTON HOMES */}
+      <WhyBuySection />
 
       {/* SECTION 4: OUR SERVICES */}
       <section className="home-services bg-slate-50 py-20 border-y border-slate-200">

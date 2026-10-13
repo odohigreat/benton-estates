@@ -5,15 +5,16 @@ import PageHero from '@/components/ui/PageHero';
 import { dbRepo } from '@/lib/db';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import { connection } from 'next/server';
 
 export const metadata = {
   title: 'Our Agents | Benton Estates',
   description: 'Meet the Benton Estates team handling inspections, documentation and allocation for every listing.'
 };
 
+// Listings are refreshed from Supabase every 5 minutes (see lib/db.ts).
+export const revalidate = 300;
+
 export default async function AgentsPage() {
-  await connection();
   const agents = await dbRepo.listAgents() as unknown as Agent[];
   return (
     <div className="space-y-16 pb-24">
