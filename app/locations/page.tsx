@@ -15,7 +15,7 @@ export const metadata = {
 
 export default async function LocationsPage() {
   await connection();
-  const locations = dbRepo.listLocations();
+  const locations = await dbRepo.listLocations();
   return (
     <div className="space-y-16 pb-24">
       <PageHero eyebrow="Where we operate" title="Browse by Location" description={<>Choose a state to see every land, residential and commercial listing we currently manage there.</>} />

@@ -16,8 +16,8 @@ export const metadata = {
 export default async function PropertiesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
   const search = parsePropertySearch(params);
-  const properties = dbRepo.searchProperties(search) as unknown as PropertyItem[];
-  const locations = dbRepo.listLocations().map(l => l.state);
+  const properties = await dbRepo.searchProperties(search) as unknown as PropertyItem[];
+  const locations = (await dbRepo.listLocations()).map(l => l.state);
   const filtered = Object.values(search).some(v => v !== undefined);
 
   return (

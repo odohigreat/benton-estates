@@ -14,7 +14,7 @@ export const metadata = {
 
 export default async function AgentsPage() {
   await connection();
-  const agents = dbRepo.listAgents() as unknown as Agent[];
+  const agents = await dbRepo.listAgents() as unknown as Agent[];
   return (
     <div className="space-y-16 pb-24">
       <PageHero eyebrow="Know who you are dealing with" title="Meet Our Agents" description={<>Every listing has a named contact who handles inspections, questions and documentation from first visit to allocation.</>}>

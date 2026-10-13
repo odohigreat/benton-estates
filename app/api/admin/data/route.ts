@@ -7,10 +7,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized administrative access' }, { status: 401 });
   }
 
-  const enquiries = dbRepo.listEnquiries();
-  const realtors = dbRepo.listRealtors();
-  const subscriptions = dbRepo.listElevationSubscriptions();
-  const properties = dbRepo.listProperties();
+  const [enquiries, realtors, subscriptions, properties] = await Promise.all([
+    dbRepo.listEnquiries(), dbRepo.listRealtors(),
+    dbRepo.listElevationSubscriptions(), dbRepo.listProperties()
+  ]);
 
   return NextResponse.json({
     success: true,
@@ -32,17 +32,17 @@ export async function PATCH(req: Request) {
     const { action, id, status, assignedManager, adminNotes } = await req.json();
 
     if (action === 'update_realtor') {
-      dbRepo.updateRealtorStatus(id, status, assignedManager, adminNotes);
+      await dbRepo.updateRealtorStatus(id, status, assignedManager, adminNotes);
       return NextResponse.json({ success: true, message: 'Realtor application updated' });
     }
 
     if (action === 'update_enquiry') {
-      dbRepo.updateEnquiryStatus(id, status);
+      await dbRepo.updateEnquiryStatus(id, status);
       return NextResponse.json({ success: true, message: 'Contact enquiry status updated' });
     }
 
     if (action === 'update_subscription') {
-      dbRepo.updateSubscriptionStatus(id, status, adminNotes);
+      await dbRepo.updateSubscriptionStatus(id, status, adminNotes);
       return NextResponse.json({ success: true, message: 'Subscription status updated' });
     }
 

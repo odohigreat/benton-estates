@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validated = contactSchema.parse(body);
 
-    const result = dbRepo.createEnquiry({
+    const result = await dbRepo.createEnquiry({
       fullName: validated.fullName,
       email: validated.email,
       phone: validated.phone,

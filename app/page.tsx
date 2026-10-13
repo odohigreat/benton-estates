@@ -25,10 +25,10 @@ import { connection } from 'next/server';
 
 export default async function HomePage() {
   await connection();
-  const properties = dbRepo.listProperties() as unknown as PropertyItem[];
-  const locations = dbRepo.listLocations().map(l => l.state);
+  const properties = await dbRepo.listProperties() as unknown as PropertyItem[];
+  const locations = (await dbRepo.listLocations()).map(l => l.state);
   // Temporary promotion; remove this and the banner below when the campaign ends.
-  const abujaListing = dbRepo.getPropertyBySlug('lugbe-4-bedroom-duplex-abuja') as PropertyItem | undefined;
+  const abujaListing = await dbRepo.getPropertyBySlug('lugbe-4-bedroom-duplex-abuja') as PropertyItem | undefined;
 
   return (
     <div className="space-y-20 sm:space-y-28 pb-16">

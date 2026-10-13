@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import ts from 'typescript';
+
+// Load the actual repository with mocked HTTP, without Next's server-only marker.
+const source = readFileSync(new URL('../lib/db.ts', import.meta.url), 'utf8').replace("import 'server-only';", '');
+const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
+const { dbRepo } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+process.env.SUPABASE_URL = 'https://example.supabase.co';
+process.env.SUPABASE_SECRET_KEY = 'sb_secret_test';
+let calls = [];
+let result = [];
+globalThis.fetch = async (url, options) => {
+  calls.push({ url, options });
+  return Response.json(result);
+};
+await dbRepo.searchProperties({ type: 'rent', location: 'Delta State', minPrice: 100, maxPrice: 200 });
+assert.equal(calls[0].url.searchParams.get('and'), '(price.gt.0,price.gte.100,price.lte.200)');
+assert.equal(calls[0].url.searchParams.get('state'), 'eq.Delta State');
+assert.equal(calls[0].options.headers.apikey, 'sb_secret_test');
+assert.equal(calls[0].options.headers.Authorization, undefined);
+assert.equal(calls[0].options.cache, 'no-store');
+result = [{ slug: 'test', agents: { name: 'Sales', position: 'Desk', photo: null } }];
+assert.equal((await dbRepo.getPropertyBySlug('test')).agent_name, 'Sales');
+result = [];
+assert.equal(await dbRepo.getPropertyBySlug('missing'), undefined);
+const receipt = await dbRepo.createEnquiry({ fullName: 'Test', email: 'test@example.com', phone: '123', enquiryType: 'General', message: 'Test', consent: true });
+const body = JSON.parse(calls.at(-1).options.body);
+assert.equal(body.full_name, 'Test');
+assert.equal(body.consent, 1);
+assert.equal(body.reference_id, receipt.referenceId);
+assert.ok(body.created_at);
+await assert.rejects(dbRepo.updateEnquiryStatus('missing', 'CLOSED'), /Record not found/);
+result = [{ id: 'test' }];
+await dbRepo.updateRealtorStatus('test', 'Approved', 'Manager', 'Reviewed');
+assert.equal(JSON.parse(calls.at(-1).options.body).assigned_manager, 'Manager');
+delete process.env.SUPABASE_SECRET_KEY;
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'legacy-test';
+await dbRepo.listEnquiries();
+assert.equal(calls.at(-1).options.headers.Authorization, 'Bearer legacy-test');
+let pages = 0;
+globalThis.fetch = async () => Response.json(pages++ === 0 ? Array.from({ length: 500 }, (_, id) => ({ id })) : [{ id: 500 }]);
+assert.equal((await dbRepo.listEnquiries()).length, 501);
+globalThis.fetch = async () => Response.json({ code: '42501', message: 'private detail' }, { status: 403 });
+await assert.rejects(dbRepo.listEnquiries(), /403.*42501/);
+delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+await assert.rejects(dbRepo.listEnquiries(), /Set SUPABASE_URL/);
+console.log('Supabase repository checks passed.');

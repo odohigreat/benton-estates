@@ -74,7 +74,7 @@ Inspired structurally and visually by premier luxury real estate platforms like 
    - WhatsApp direct click with pre-filled enquiry parameters.
    - Live backend-persisted enquiry form.
 9. **Staff Administrative Portal (`/admin`)**:
-   - Secure, protected dashboard accessed via security passcode (`benton2026!admin`).
+   - Secure, protected dashboard accessed via the server-configured `ADMIN_SECRET_KEY` passcode.
    - Real-time review of Contact Enquiries, Realtor Applications, and Elevation Subscriptions.
    - In-app status management (Pending -> Approved / Declined), manager assignment, and administrative notes.
 10. **Legal & Compliance (`/privacy` & `/terms`)**:
@@ -88,7 +88,7 @@ Inspired structurally and visually by premier luxury real estate platforms like 
 - **Styling**: Tailwind CSS v4 with custom brand tokens
 - **Icons**: Lucide React
 - **Validation**: Zod schema validation
-- **Persistence**: High-performance SQLite via Node 24 native `node:sqlite` DatabaseSync with WAL journal mode (zero external database daemons required for local dev, fully schema-ready for PostgreSQL / Supabase via `DATABASE_URL`)
+- **Persistence**: Supabase PostgreSQL through its Data REST API; server-only credentials and Row Level Security. See [setup instructions](supabase/README.md).
 - **Assets**: Transparent official Benton logo, high-res architectural and surveyed land photography
 
 ---
@@ -96,7 +96,7 @@ Inspired structurally and visually by premier luxury real estate platforms like 
 ## Getting Started Locally
 
 ### Prerequisites
-- Node.js v20+ (Node.js v22/v24 recommended)
+- Node.js v22.5+ (v24 recommended)
 - npm v10+
 
 ### Installation & Run
@@ -134,4 +134,4 @@ Inspired structurally and visually by premier luxury real estate platforms like 
 ## Administrative Access
 
 - **URL**: [http://localhost:3000/admin](http://localhost:3000/admin)
-- **Default Passcode**: `benton2026!admin` (configurable in `.env` via `ADMIN_SECRET_KEY`)
+- **Passcode**: Set `ADMIN_SECRET_KEY` in your server environment; required in production.

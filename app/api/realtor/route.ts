@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validated = realtorSchema.parse(body);
 
-    const result = dbRepo.createRealtorApplication({
+    const result = await dbRepo.createRealtorApplication({
       fullName: validated.fullName,
       phone: validated.phone,
       email: validated.email,

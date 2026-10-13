@@ -18,7 +18,7 @@ import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const prop = dbRepo.getPropertyBySlug(slug) as unknown as PropertyItem;
+  const prop = await dbRepo.getPropertyBySlug(slug) as unknown as PropertyItem;
   if (!prop) {
     return { title: 'Property Not Found | Benton Estates' };
   }
@@ -30,14 +30,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PropertyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const property = dbRepo.getPropertyBySlug(slug) as unknown as PropertyItem;
+  const property = await dbRepo.getPropertyBySlug(slug) as unknown as PropertyItem;
 
   if (!property) {
     notFound();
   }
 
   const isElevation = property.slug === 'elevation-estate';
-  const agent = property.agent_id ? dbRepo.getAgent(property.agent_id) as Agent | undefined : undefined;
+  const agent = property.agent_id ? await dbRepo.getAgent(property.agent_id) as Agent | undefined : undefined;
 
   const highlights: string[] = (() => {
     try {

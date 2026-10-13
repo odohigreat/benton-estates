@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validated = subscriptionSchema.parse(body);
 
-    const result = dbRepo.createElevationSubscription({
+    const result = await dbRepo.createElevationSubscription({
       title: validated.title,
       surname: validated.surname,
       otherNames: validated.otherNames,

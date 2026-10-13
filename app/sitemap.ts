@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { dbRepo } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 const baseUrl = 'https://bentonhomes.com';
 
 const staticRoutes = [
@@ -8,8 +10,8 @@ const staticRoutes = [
   '/become-a-realtor', '/properties/elevation-estate/subscribe', '/privacy', '/terms'
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const properties = dbRepo.listProperties() as { slug: string; updated_at: string }[];
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const properties = await dbRepo.listProperties() as { slug: string; updated_at: string }[];
 
   return [
     ...staticRoutes.map(route => ({ url: `${baseUrl}${route}` })),
