@@ -2,6 +2,7 @@ import 'server-only';
 import { randomUUID } from 'node:crypto';
 import type { Agent } from '@/components/listings/AgentCard';
 import type { PropertyItem } from '@/components/ui/PropertyCard';
+import type { VideoRow } from '@/lib/videos';
 
 export interface PropertySearch {
   type?: 'sale' | 'rent';
@@ -70,6 +71,10 @@ async function properties(filters: Record<string, string> = {}) {
   const rows = filters.limit ? await request<PropertyRow[]>('properties', params) : await list<PropertyRow>('properties', params);
   return rows.map(({ agents, ...property }) => ({ ...property, agent_name: agents?.name ?? null, agent_position: agents?.position ?? null, agent_photo: agents?.photo ?? null }));
 }
+
+export type VideoInput = { title: string; url: string; category: string; publishedAt: string };
+const videoSelect = 'id,title,url,category,published_at';
+const videoColumns = (video: VideoInput) => ({ title: video.title, url: video.url, category: video.category, published_at: video.publishedAt });
 
 export const dbRepo = {
   async createEnquiry(data: {
@@ -202,5 +207,14 @@ export const dbRepo = {
     const rows = await list<Row & { properties: { id: string }[] }>('agents', { select: '*,properties(id)', order: 'name.asc' });
     return rows.map(({ properties, ...agent }) => ({ ...agent, listing_count: properties.length }));
   },
-  async getAgent(id: string) { return (await request<Agent[]>('agents', { id: `eq.${id}`, limit: '1' }))[0]; }
+  async getAgent(id: string) { return (await request<Agent[]>('agents', { id: `eq.${id}`, limit: '1' }))[0]; },
+
+  listVideos: (limit = 20) => request<VideoRow[]>('videos', { select: videoSelect, order: 'published_at.desc,created_at.desc', limit: String(limit) }),
+  listAllVideos: () => list<VideoRow>('videos', { select: videoSelect, order: 'published_at.desc,created_at.desc' }),
+  async createVideo(video: VideoInput) { return (await request<VideoRow[]>('videos', { select: videoSelect }, 'POST', videoColumns(video)))[0]; },
+  updateVideo: (id: string, video: VideoInput) => update('videos', id, videoColumns(video)),
+  async deleteVideo(id: string) {
+    const rows = await request<Row[]>('videos', { id: `eq.${id}` }, 'DELETE');
+    if (!rows.length) throw new Error('Record not found');
+  }
 };

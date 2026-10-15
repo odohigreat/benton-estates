@@ -3,6 +3,7 @@
 import BentonLogo from '@/components/ui/BentonLogo';
 import StatusBadge from '@/components/ui/StatusBadge';
 import EmptyState from '@/components/ui/EmptyState';
+import VideoManager from '@/components/admin/VideoManager';
 import {
   CheckCircle2,
   ChevronRight,
@@ -12,7 +13,8 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
-  Users
+  Users,
+  Video
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -26,7 +28,7 @@ export default function AdminDashboardPage() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'enquiries' | 'realtors' | 'subscriptions'>('enquiries');
+  const [activeTab, setActiveTab] = useState<'enquiries' | 'realtors' | 'subscriptions' | 'videos'>('enquiries');
   const [data, setData] = useState<{
     enquiries: AdminRecord[];
     realtors: AdminRecord[];
@@ -358,6 +360,18 @@ export default function AdminDashboardPage() {
           <ShieldCheck className="w-4 h-4" />
           Elevation Subscriptions ({data.subscriptions.length})
         </button>
+
+        <button
+          aria-pressed={activeTab === 'videos'}
+          onClick={() => { setActiveTab('videos'); setSelectedItem(null); }}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === 'videos'
+              ? 'bg-[#0304CE] text-white shadow-sm'
+              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+        >
+          <Video className="w-4 h-4" />
+          Videos
+        </button>
       </div>
 
       {/* Content Area */}
@@ -501,6 +515,9 @@ export default function AdminDashboardPage() {
               )}
             </div>
           )}
+
+          {/* TAB 4: FEATURED VIDEOS */}
+          {activeTab === 'videos' && <VideoManager authToken={authToken} searchTerm={searchTerm} />}
 
         </div>
 

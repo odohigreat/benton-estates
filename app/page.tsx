@@ -1,6 +1,7 @@
 import EnquiryForm from '@/components/forms/EnquiryForm';
 import HomeHero from '@/components/home/HomeHero';
 import ListingBanner from '@/components/home/ListingBanner';
+import VideoSection from '@/components/home/VideoSection';
 import WhyBuySection from '@/components/home/WhyBuySection';
 import PropertySearchBar from '@/components/listings/PropertySearchBar';
 import Reveal from '@/components/motion/Reveal';
@@ -136,6 +137,9 @@ export default async function HomePage() {
 
       {/* WHY BUY FROM BENTON HOMES */}
       <WhyBuySection />
+
+      {/* FEATURED VIDEOS (managed in /admin → Videos) */}
+      <VideoSection />
 
       {/* SECTION 4: OUR SERVICES */}
       <section className="home-services bg-slate-50 py-20 border-y border-slate-200">

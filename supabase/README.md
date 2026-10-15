@@ -16,6 +16,10 @@
 
 All tables enable RLS and revoke access from `anon` and `authenticated`. Only the server's privileged key can access them. Public pages and forms go through Next.js, and administrative routes retain their existing authentication checks. Never commit or paste the secret key into client code.
 
+## Migrations
+
+Run each file in `migrations/` in the SQL Editor after `setup.sql`, in filename order. `20261015000000_create_videos.sql` adds the `videos` table behind the home-page Featured Videos carousel and the **Videos** tab in `/admin`. Visitors can read it; only the server key can write.
+
 ## Existing local data
 
 `setup.sql` contains starter catalogue data, not existing enquiries, applications, subscriptions, or local edits. Preserve `data/benton.db` and its WAL files. To migrate that database, run:
