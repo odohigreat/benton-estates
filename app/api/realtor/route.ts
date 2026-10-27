@@ -10,21 +10,17 @@ const realtorSchema = z.object({
   cityState: z.string().min(2, 'City/State is required'),
   residentialAddress: z.string().min(5, 'Residential address is required'),
 
-  // Section 2
-  isRealtor: z.string().min(1, 'Please indicate if you are currently a realtor'),
-  experience: z.string().min(1, 'Please select your experience level'),
+  // Removed from the form; kept optional so older clients and existing columns still work
+  isRealtor: z.string().optional().default(''),
+  experience: z.string().optional().default(''),
   currentCompany: z.string().optional().default(''),
-  role: z.string().min(1, 'Please select your role'),
-  areasOperate: z.string().min(1, 'Please specify the areas where you operate'),
+  role: z.string().optional().default(''),
+  areasOperate: z.string().optional().default(''),
   otherArea: z.string().optional().default(''),
-
-  // Section 3
-  propertiesClosed: z.string().min(1, 'Please select property deals closed'),
-  strongestSkill: z.string().min(1, 'Please select your strongest skill'),
-  mainLeadSource: z.string().min(1, 'Please select your main lead source'),
-  availableInspections: z.string().min(1, 'Please indicate inspection availability'),
-
-  // Section 4
+  propertiesClosed: z.string().optional().default(''),
+  strongestSkill: z.string().optional().default(''),
+  mainLeadSource: z.string().optional().default(''),
+  availableInspections: z.string().optional().default(''),
   instagram: z.string().optional().default(''),
   facebook: z.string().optional().default(''),
   tiktok: z.string().optional().default(''),

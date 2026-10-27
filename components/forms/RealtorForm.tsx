@@ -16,39 +16,19 @@ export default function RealtorForm() {
     cityState: '',
     residentialAddress: '',
 
-    // Section 2: Realtor Profile
-    isRealtor: 'Yes',
-    experience: '1–2 yrs',
-    currentCompany: '',
-    role: 'Realtor',
-    areasOperate: ['Warri', 'Effurun'],
-    otherArea: '',
-
-    // Section 3: Sales & Marketing
-    propertiesClosed: '1–5',
-    strongestSkill: 'Lead Gen',
-    mainLeadSource: 'WhatsApp',
-    availableInspections: 'Yes',
-
-    // Section 4: Digital Presence
-    instagram: '',
-    facebook: '',
-    tiktok: '',
-    linkedinOther: '',
-
-    // Section 5: Benton Homes Partnership
+    // Section 2: Benton Homes Partnership
     whyPartner: '',
     hopesToAchieve: ['Income', 'Career', 'Training'],
     heardAboutUs: 'Social Media',
     heardAboutUsOther: '',
 
-    // Section 6: Identification & Reference
+    // Section 3: Identification & Reference
     meansOfId: 'National ID',
     idNumber: '',
     nextOfKinName: '',
     nextOfKinPhone: '',
 
-    // Section 7: Declaration
+    // Section 4: Declaration
     declarationAgreed: false,
     signatureName: '',
     signatureDate: new Date().toISOString().split('T')[0]
@@ -61,7 +41,7 @@ export default function RealtorForm() {
   } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const toggleCheckbox = (field: 'areasOperate' | 'hopesToAchieve', value: string) => {
+  const toggleCheckbox = (field: 'hopesToAchieve', value: string) => {
     setFormData((prev) => {
       const list = prev[field];
       if (list.includes(value)) {
@@ -78,7 +58,7 @@ export default function RealtorForm() {
     setErrorMessage(null);
 
     if (!formData.declarationAgreed) {
-      setErrorMessage('You must review and agree to the Declaration in Section 7.');
+      setErrorMessage('You must review and agree to the Declaration in Section 4.');
       setIsSubmitting(false);
       return;
     }
@@ -86,7 +66,6 @@ export default function RealtorForm() {
     try {
       const payload = {
         ...formData,
-        areasOperate: formData.areasOperate.join(', '),
         hopesToAchieve: formData.hopesToAchieve.join(', ')
       };
 
@@ -188,7 +167,7 @@ export default function RealtorForm() {
         </div>
       </div>
 
-      <FormProgress sections={[{ id: 'realtor-personal', label: 'Personal' }, { id: 'realtor-profile', label: 'Profile' }, { id: 'realtor-sales', label: 'Sales' }, { id: 'realtor-social', label: 'Social' }, { id: 'realtor-partnership', label: 'Partnership' }, { id: 'realtor-identification', label: 'Identification' }, { id: 'realtor-declaration', label: 'Declaration' }, { id: 'realtor-office', label: 'Office use' }]} />
+      <FormProgress sections={[{ id: 'realtor-personal', label: 'Personal' }, { id: 'realtor-partnership', label: 'Partnership' }, { id: 'realtor-identification', label: 'Identification' }, { id: 'realtor-declaration', label: 'Declaration' }, { id: 'realtor-office', label: 'Office use' }]} />
       <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-10">
         {errorMessage && (
           <FormFeedback className="p-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
@@ -277,262 +256,10 @@ export default function RealtorForm() {
           </div>
         </section>
 
-        {/* SECTION 2: REALTOR PROFILE */}
-        <section id="realtor-profile" className="space-y-4">
-          <h2 className="bg-[#0304CE] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
-            2. REALTOR PROFILE
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Are you currently a Realtor?
-              </legend><div className="flex items-center gap-6">
-                  {['Yes', 'No'].map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="isRealtor"
-                        checked={formData.isRealtor === opt}
-                        onChange={() => setFormData({ ...formData, isRealtor: opt })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Experience
-              </legend><div className="flex flex-wrap items-center gap-4">
-                  {['<1 yr', '1–2 yrs', '3–5 yrs', '5+ yrs'].map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="experience"
-                        checked={formData.experience === opt}
-                        onChange={() => setFormData({ ...formData, experience: opt })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-
-            <div>
-              <label htmlFor={`${formId}-currentCompany`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                Current Company / Business
-              </label>
-              <input id={`${formId}-currentCompany`}
-                type="text"
-                placeholder="Current real estate firm or business name"
-                value={formData.currentCompany}
-                onChange={(e) => setFormData({ ...formData, currentCompany: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Role
-              </legend><div className="flex flex-wrap items-center gap-4">
-                  {['Realtor', 'Consultant', 'Marketer', 'Investor'].map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="role"
-                        checked={formData.role === opt}
-                        onChange={() => setFormData({ ...formData, role: opt })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-
-            <div className="md:col-span-2">
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Areas You Operate (Select all that apply)
-              </legend><div className="flex flex-wrap items-center gap-4 mb-3">
-                  {['Warri', 'Effurun', 'Udu', 'Asaba', 'Lagos'].map((area) => (
-                    <label key={area} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.areasOperate.includes(area)}
-                        onChange={() => toggleCheckbox('areasOperate', area)}
-                        className="rounded text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{area}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-              <label htmlFor={`${formId}-otherArea`} className="block text-xs font-bold mb-2">Other area(s)</label>
-              <input id={`${formId}-otherArea`}
-                type="text"
-                placeholder="Other area(s), specify here..."
-                value={formData.otherArea}
-                onChange={(e) => setFormData({ ...formData, otherArea: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 3: SALES & MARKETING */}
-        <section id="realtor-sales" className="space-y-4">
-          <h2 className="bg-[#0304CE] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
-            3. SALES &amp; MARKETING
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Property Deals Closed
-              </legend><div className="flex items-center gap-5">
-                  {['0', '1–5', '6–10', '10+'].map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="propertiesClosed"
-                        checked={formData.propertiesClosed === opt}
-                        onChange={() => setFormData({ ...formData, propertiesClosed: opt })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Strongest Skill
-              </legend><div className="flex flex-wrap items-center gap-3">
-                  {['Lead Gen', 'Follow-up', 'Closing', 'Communication', 'Negotiation', 'Networking'].map((skill) => (
-                    <label key={skill} className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="strongestSkill"
-                        checked={formData.strongestSkill === skill}
-                        onChange={() => setFormData({ ...formData, strongestSkill: skill })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{skill}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Main Lead Source
-              </legend><div className="flex flex-wrap items-center gap-3">
-                  {['WhatsApp', 'Instagram', 'TikTok', 'Facebook', 'Referrals', 'Physical Marketing', 'Ads'].map((src) => (
-                    <label key={src} className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mainLeadSource"
-                        checked={formData.mainLeadSource === src}
-                        onChange={() => setFormData({ ...formData, mainLeadSource: src })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{src}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-
-            <div>
-              <fieldset><legend className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
-                Available for Property Inspections?
-              </legend><div className="flex items-center gap-6">
-                  {['Yes', 'No'].map((opt) => (
-                    <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="availableInspections"
-                        checked={formData.availableInspections === opt}
-                        onChange={() => setFormData({ ...formData, availableInspections: opt })}
-                        className="text-[#0304CE] focus:ring-[#0304CE]"
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div></fieldset>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 4: DIGITAL PRESENCE */}
-        <section id="realtor-social" className="space-y-4">
-          <h2 className="bg-[#0304CE] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center justify-between">
-            <span>4. DIGITAL PRESENCE</span>
-            <span className="text-[11px] text-blue-200 font-normal">Optional social handles</span>
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <div>
-              <label htmlFor={`${formId}-instagram`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                Instagram
-              </label>
-              <input id={`${formId}-instagram`}
-                type="text"
-                placeholder="@username"
-                value={formData.instagram}
-                onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label htmlFor={`${formId}-facebook`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                Facebook
-              </label>
-              <input id={`${formId}-facebook`}
-                type="text"
-                placeholder="Facebook page / name"
-                value={formData.facebook}
-                onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label htmlFor={`${formId}-tiktok`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                TikTok
-              </label>
-              <input id={`${formId}-tiktok`}
-                type="text"
-                placeholder="@username"
-                value={formData.tiktok}
-                onChange={(e) => setFormData({ ...formData, tiktok: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label htmlFor={`${formId}-linkedinOther`} className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                LinkedIn / Other
-              </label>
-              <input id={`${formId}-linkedinOther`}
-                type="text"
-                placeholder="Profile link or other platform"
-                value={formData.linkedinOther}
-                onChange={(e) => setFormData({ ...formData, linkedinOther: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#0304CE] focus:outline-none"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 5: BENTON HOMES PARTNERSHIP */}
+        {/* SECTION 2: BENTON HOMES PARTNERSHIP */}
         <section id="realtor-partnership" className="space-y-4">
           <h2 className="bg-[#0304CE] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
-            5. BENTON HOMES PARTNERSHIP
+            2. BENTON HOMES PARTNERSHIP
           </h2>
 
           <div className="space-y-4 pt-2">
@@ -598,10 +325,10 @@ export default function RealtorForm() {
           </div>
         </section>
 
-        {/* SECTION 6: IDENTIFICATION & REFERENCE */}
+        {/* SECTION 3: IDENTIFICATION & REFERENCE */}
         <section id="realtor-identification" className="space-y-4">
           <h2 className="bg-[#0304CE] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
-            6. IDENTIFICATION &amp; REFERENCE
+            3. IDENTIFICATION &amp; REFERENCE
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
@@ -668,10 +395,10 @@ export default function RealtorForm() {
           </div>
         </section>
 
-        {/* SECTION 7: DECLARATION */}
+        {/* SECTION 4: DECLARATION */}
         <section id="realtor-declaration" className="space-y-4">
           <h2 className="bg-[#0304CE] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase tracking-wider">
-            7. DECLARATION
+            4. DECLARATION
           </h2>
 
           <div className="p-4 rounded-md bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed space-y-2">
@@ -724,7 +451,7 @@ export default function RealtorForm() {
           </div>
         </section>
 
-        {/* SECTION 8: FOR OFFICE USE ONLY (Visual acknowledgement) */}
+        {/* SECTION 5: FOR OFFICE USE ONLY (Visual acknowledgement) */}
         <section id="realtor-office" className="border border-dashed border-slate-300 bg-slate-50/70 p-5 rounded-md text-xs text-slate-500">
           <h2 className="font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-2">
             <Shield className="w-4 h-4 text-[#0304CE]" />
